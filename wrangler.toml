@@ -8,6 +8,7 @@ assets = { directory = ".vercel/output/static" }
 [[d1_databases]]
 binding = "DB"
 database_name = "coursesproj-db"
+database_id = "5412f219-155c-4921-85df-1ce86369d7c5"
 
 [vars]
 NODE_ENV = "production"
