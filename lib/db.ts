@@ -1,6 +1,4 @@
-// D1 type stub - the actual binding is injected at runtime by Cloudflare Pages
-// We declare the type locally to avoid needing @cloudflare/workers-types
-
+// D1 type stub - the actual binding is injected at runtime by Cloudflare
 export interface D1Database {
   prepare(query: string): D1PreparedStatement;
   dump(): Promise<ArrayBuffer>;
@@ -23,23 +21,19 @@ export interface D1Result<T = unknown> {
 }
 
 /**
- * Get D1 database from Cloudflare's global env injection.
- * In Cloudflare Pages runtime, bindings appear on globalThis.__env__
+ * Get D1 database from Cloudflare's runtime environment injection.
  */
 export function getDB(): D1Database {
-  // 1. Cloudflare Pages production (Next.js Edge runtime injects into globalThis.__env__)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env = (globalThis as any).__env__;
-  if (env?.DB) return env.DB as D1Database;
-  
-  // 2. Fallback for older adapters
+  const g = globalThis as any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const env2 = (process as any).__cloudflareBindings;
-  if (env2?.DB) return env2.DB as D1Database;
-  
-  // 3. Local dev using setupDevPlatform() which patches process.env
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((process.env as any).DB) return (process.env as any).DB as D1Database;
+  const p = (typeof process !== 'undefined' ? process : {}) as any;
 
-  throw new Error('D1 DB binding not available');
+  if (g.DB) return g.DB as D1Database;
+  if (g.__env__?.DB) return g.__env__.DB as D1Database;
+  if (g.env?.DB) return g.env.DB as D1Database;
+  if (p.env?.DB) return p.env.DB as D1Database;
+  if (p.__cloudflareBindings?.DB) return p.__cloudflareBindings.DB as D1Database;
+
+  throw new Error('D1 DB binding not available. Ensure D1 binding "DB" is set.');
 }
