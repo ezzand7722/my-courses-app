@@ -27,7 +27,7 @@ export default function UploadDropzone({
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const activeCloudName = propCloudName || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || customCloudName;
+  const activeCloudName = propCloudName || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || customCloudName || 'uyiqzoyc';
 
   const handleUpload = useCallback(async (file: File) => {
     if (!file) return;
