@@ -618,39 +618,20 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
               {/* Cover image */}
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>صورة الغلاف</label>
-                {courseForm.cover_image_url ? (
-                  <div style={{ position: 'relative', display: 'inline-block' }}>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>رابط صورة الغلاف (مثال: Imgur)</label>
+                <input
+                  className="input-field"
+                  placeholder="https://i.imgur.com/example.jpg"
+                  value={courseForm.cover_image_url}
+                  onChange={e => setCourseForm(p => ({ ...p, cover_image_url: e.target.value }))}
+                  disabled={saving}
+                  style={{ direction: 'ltr' }}
+                />
+                {courseForm.cover_image_url && (
+                  <div style={{ marginTop: 8 }}>
                     <img src={courseForm.cover_image_url} alt="غلاف"
                       style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 10, border: '1px solid #E5E7EB', display: 'block' }} />
-                    <button
-                      type="button"
-                      onClick={() => setCourseForm(p => ({ ...p, cover_image_url: '' }))}
-                      style={{
-                        position: 'absolute', top: 4, right: 4,
-                        background: 'rgba(239,68,68,0.9)', color: 'white', border: 'none',
-                        borderRadius: '50%', width: 24, height: 24, cursor: 'pointer',
-                        fontWeight: 700, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      }}
-                    >×</button>
                   </div>
-                ) : (
-                  <label htmlFor="edit-cover-input" style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    border: '1.5px dashed #E5E7EB', borderRadius: 10, padding: '12px 16px',
-                    cursor: uploadingCover ? 'not-allowed' : 'pointer', background: '#F9FAFB',
-                  }}>
-                    <input
-                      id="edit-cover-input" type="file" accept="image/*"
-                      style={{ display: 'none' }}
-                      onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }}
-                      disabled={uploadingCover}
-                    />
-                    {uploadingCover
-                      ? <><div className="spinner spinner-primary" /><span style={{ fontSize: 13, color: '#6B7280' }}>جاري الرفع...</span></>
-                      : <><span style={{ fontSize: 20 }}>🖼️</span><span style={{ fontSize: 13, color: '#6B7280' }}>اضغط لرفع صورة الغلاف</span></>
-                    }
-                  </label>
                 )}
               </div>
 

@@ -177,46 +177,22 @@ export default function NewCoursePage() {
             {/* Cover image */}
             <div style={{ marginBottom: 28 }}>
               <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
-                صورة غلاف الدورة (اختياري)
+                رابط صورة غلاف الدورة (مثال: Imgur) (اختياري)
               </label>
-              {form.cover_image_url ? (
-                <div style={{ position: 'relative', display: 'inline-block' }}>
+              <input
+                className="input-field"
+                placeholder="https://i.imgur.com/example.jpg"
+                value={form.cover_image_url}
+                onChange={e => setForm(p => ({ ...p, cover_image_url: e.target.value }))}
+                disabled={loading}
+                style={{ direction: 'ltr' }}
+              />
+              {form.cover_image_url && (
+                <div style={{ marginTop: 12 }}>
                   <img src={form.cover_image_url} alt="غلاف"
                     style={{ width: 200, height: 120, objectFit: 'cover', borderRadius: 10, border: '1px solid #E5E7EB' }} />
-                  <button
-                    type="button"
-                    onClick={() => setForm(p => ({ ...p, cover_image_url: '' }))}
-                    style={{
-                      position: 'absolute', top: -8, right: -8,
-                      background: '#EF4444', color: 'white', border: 'none',
-                      borderRadius: '50%', width: 24, height: 24,
-                      cursor: 'pointer', fontWeight: 700, fontSize: 14,
-                    }}
-                  >×</button>
                 </div>
-              ) : (
-                <label htmlFor="cover-input" style={{
-                  display: 'flex', alignItems: 'center', gap: 12,
-                  border: '1.5px dashed #E5E7EB', borderRadius: 12, padding: '16px 20px',
-                  cursor: uploadingCover ? 'not-allowed' : 'pointer',
-                  background: uploadingCover ? '#F9FAFB' : 'white',
-                  transition: 'border-color 0.2s',
-                }}>
-                  <input
-                    id="cover-input"
-                    type="file" accept="image/*"
-                    style={{ display: 'none' }}
-                    onChange={e => { const f = e.target.files?.[0]; if (f) handleCoverUpload(f); }}
-                    disabled={uploadingCover}
-                  />
-                  {uploadingCover ? (
-                    <><div className="spinner spinner-primary" /><span style={{ color: '#6B7280' }}>جاري الرفع...</span></>
-                  ) : (
-                    <><span style={{ fontSize: 24 }}>🖼️</span><span style={{ color: '#6B7280', fontSize: 14 }}>اضغط لرفع صورة الغلاف</span></>
-                  )}
-                </label>
               )}
-              {errors.cover && <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.cover}</div>}
             </div>
 
             <div style={{ display: 'flex', gap: 12 }}>
