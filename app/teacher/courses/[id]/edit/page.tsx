@@ -527,45 +527,56 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                       </div>
                     </div>
 
-                    {/* YouTube/Vimeo link input (expandable) */}
+                    {/* Cloudinary Video Upload & YouTube link input */}
                     {uploadingForLesson === lesson.id && (
                       <div style={{ padding: 16, background: '#F9FAFB', borderTop: '1px solid #E5E7EB' }}>
-                        <label style={{ display: 'block', fontSize: 13, fontWeight: 600, marginBottom: 8 }}>
-                          رابط الفيديو (YouTube أو Vimeo)
-                        </label>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          <input
-                            type="url"
-                            placeholder="https://www.youtube.com/watch?v=..."
-                            defaultValue={lesson.video_url || ''}
-                            style={{
-                              flex: 1, padding: '10px 14px', borderRadius: 8, border: '1px solid #D1D5DB',
-                              fontFamily: 'Cairo, sans-serif', fontSize: 14, outline: 'none',
-                              boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
-                              direction: 'ltr'
-                            }}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
-                                e.preventDefault();
-                                handleVideoUpload(lesson.id, e.currentTarget.value);
-                                setUploadingForLesson(null);
-                              }
-                            }}
-                          />
-                          <button
-                            onClick={(e) => {
-                              const input = e.currentTarget.previousSibling as HTMLInputElement;
-                              handleVideoUpload(lesson.id, input.value);
+                        <div style={{ marginBottom: 12 }}>
+                          <UploadDropzone
+                            acceptType="video"
+                            onUploadComplete={(url) => {
+                              handleVideoUpload(lesson.id, url);
                               setUploadingForLesson(null);
                             }}
-                            style={{
-                              background: '#3B82F6', color: 'white', padding: '0 16px', borderRadius: 8,
-                              border: 'none', fontWeight: 600, fontFamily: 'Cairo, sans-serif', cursor: 'pointer'
-                            }}
-                          >
-                            حفظ الرابط
-                          </button>
+                          />
                         </div>
+                        <details style={{ marginTop: 8 }}>
+                          <summary style={{ fontSize: 13, color: '#4F46E5', cursor: 'pointer', fontWeight: 600 }}>
+                            🔗 أو أدخل رابط فيديو من (YouTube / Vimeo)
+                          </summary>
+                          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                            <input
+                              type="url"
+                              placeholder="https://www.youtube.com/watch?v=..."
+                              defaultValue={lesson.video_url || ''}
+                              style={{
+                                flex: 1, padding: '10px 14px', borderRadius: 8, border: '1px solid #D1D5DB',
+                                fontFamily: 'Cairo, sans-serif', fontSize: 14, outline: 'none',
+                                boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)',
+                                direction: 'ltr'
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  e.preventDefault();
+                                  handleVideoUpload(lesson.id, e.currentTarget.value);
+                                  setUploadingForLesson(null);
+                                }
+                              }}
+                            />
+                            <button
+                              onClick={(e) => {
+                                const input = e.currentTarget.previousSibling as HTMLInputElement;
+                                handleVideoUpload(lesson.id, input.value);
+                                setUploadingForLesson(null);
+                              }}
+                              style={{
+                                background: '#3B82F6', color: 'white', padding: '0 16px', borderRadius: 8,
+                                border: 'none', fontWeight: 600, fontFamily: 'Cairo, sans-serif', cursor: 'pointer'
+                              }}
+                            >
+                              حفظ الرابط
+                            </button>
+                          </div>
+                        </details>
                       </div>
                     )}
                   </div>
@@ -619,21 +630,30 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
               {/* Cover image */}
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>رابط صورة الغلاف (مثال: Imgur)</label>
-                <input
-                  className="input-field"
-                  placeholder="https://i.imgur.com/example.jpg"
-                  value={courseForm.cover_image_url}
-                  onChange={e => setCourseForm(p => ({ ...p, cover_image_url: e.target.value }))}
-                  disabled={saving}
-                  style={{ direction: 'ltr' }}
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 8 }}>صورة غلاف الدورة</label>
+                <UploadDropzone
+                  acceptType="image"
+                  onUploadComplete={(url) => setCourseForm(p => ({ ...p, cover_image_url: url }))}
                 />
                 {courseForm.cover_image_url && (
-                  <div style={{ marginTop: 8 }}>
+                  <div style={{ marginTop: 12 }}>
                     <img src={courseForm.cover_image_url} alt="غلاف"
                       style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 10, border: '1px solid #E5E7EB', display: 'block' }} />
                   </div>
                 )}
+                <details style={{ marginTop: 10 }}>
+                  <summary style={{ fontSize: 12, color: '#4F46E5', cursor: 'pointer', fontWeight: 600 }}>
+                    🔗 أو أدخل رابط صورة خارجي (Imgur)
+                  </summary>
+                  <input
+                    className="input-field"
+                    placeholder="https://i.imgur.com/example.jpg"
+                    value={courseForm.cover_image_url}
+                    onChange={e => setCourseForm(p => ({ ...p, cover_image_url: e.target.value }))}
+                    disabled={saving}
+                    style={{ direction: 'ltr', marginTop: 6 }}
+                  />
+                </details>
               </div>
 
               <button

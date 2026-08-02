@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
+import UploadDropzone from '@/components/UploadDropzone';
 import { SUBJECTS } from '@/lib/utils';
 
 export default function NewCoursePage() {
@@ -176,16 +177,12 @@ export default function NewCoursePage() {
 
             {/* Cover image */}
             <div style={{ marginBottom: 28 }}>
-              <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
-                رابط صورة غلاف الدورة (مثال: Imgur) (اختياري)
+              <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 8 }}>
+                صورة غلاف الدورة
               </label>
-              <input
-                className="input-field"
-                placeholder="https://i.imgur.com/example.jpg"
-                value={form.cover_image_url}
-                onChange={e => setForm(p => ({ ...p, cover_image_url: e.target.value }))}
-                disabled={loading}
-                style={{ direction: 'ltr' }}
+              <UploadDropzone
+                acceptType="image"
+                onUploadComplete={(url) => setForm(p => ({ ...p, cover_image_url: url }))}
               />
               {form.cover_image_url && (
                 <div style={{ marginTop: 12 }}>
