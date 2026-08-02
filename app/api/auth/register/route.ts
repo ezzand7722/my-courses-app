@@ -36,20 +36,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'البريد الإلكتروني مستخدم بالفعل' }, { status: 409 });
     }
 
-    // Whitelist check: allow if superuser or if in allowed_teachers table
-    if (lowerEmail !== 'superuser2@kilani.com') {
-      const isAllowed = await db
-        .prepare('SELECT email FROM allowed_teachers WHERE email = ?')
-        .bind(lowerEmail)
-        .first();
-      
-      if (!isAllowed) {
-        return NextResponse.json({ error: 'غير مصرح لهذا البريد الإلكتروني بالتسجيل كمعلم. يرجى التواصل مع الإدارة.' }, { status: 403 });
-      }
-    }
-
     // Determine role
-    const role = lowerEmail === 'superuser2@kilani.com' ? 'admin' : 'teacher';
+    const role = (lowerEmail === 'superuser2@kilani.com' || lowerEmail === 'admin@kilani.com') ? 'admin' : 'teacher';
 
     // Hash password and create user
     const passwordHash = await hashPassword(password);
