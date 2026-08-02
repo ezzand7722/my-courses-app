@@ -1,4 +1,5 @@
-// D1 type stub - the actual binding is injected at runtime by Cloudflare
+import { getRequestContext } from '@cloudflare/next-on-pages';
+
 export interface D1Database {
   prepare(query: string): D1PreparedStatement;
   dump(): Promise<ArrayBuffer>;
@@ -24,11 +25,18 @@ export interface D1Result<T = unknown> {
  * Get D1 database from Cloudflare's runtime environment injection.
  */
 export function getDB(): D1Database {
+  // 1. Official Cloudflare next-on-pages request context
+  try {
+    const ctx = getRequestContext();
+    if (ctx?.env?.DB) return ctx.env.DB as unknown as D1Database;
+  } catch {}
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const g = globalThis as any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const p = (typeof process !== 'undefined' ? process : {}) as any;
 
+  // 2. Global & process fallbacks
   if (g.DB) return g.DB as D1Database;
   if (g.__env__?.DB) return g.__env__.DB as D1Database;
   if (g.env?.DB) return g.env.DB as D1Database;
