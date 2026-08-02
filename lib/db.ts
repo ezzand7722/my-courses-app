@@ -27,8 +27,9 @@ export interface D1Result<T = unknown> {
 export function getDB(): D1Database {
   // 1. Official Cloudflare next-on-pages request context
   try {
-    const ctx = getRequestContext();
-    if (ctx?.env?.DB) return ctx.env.DB as unknown as D1Database;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ctx = getRequestContext() as any;
+    if (ctx?.env?.DB) return ctx.env.DB as D1Database;
   } catch {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
