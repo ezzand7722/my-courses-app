@@ -1,5 +1,4 @@
 import { SignJWT, jwtVerify } from 'jose';
-import bcrypt from 'bcryptjs';
 
 const JWT_SECRET_KEY = new TextEncoder().encode(
   process.env.JWT_SECRET || 'CHANGE_ME_IN_PRODUCTION_THIS_IS_A_STRONG_SECRET'
@@ -32,14 +31,20 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
   }
 }
 
+/**
+ * Fast & secure Web Crypto password hashing for Cloudflare Edge Runtime
+ */
 export async function hashPassword(password: string): Promise<string> {
-  // Use synchronous version because Edge runtime doesn't support setImmediate
-  return bcrypt.hashSync(password, 12);
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'SALT_COURSES_APP_2026');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
-  // Use synchronous version because Edge runtime doesn't support setImmediate
-  return bcrypt.compareSync(password, hash);
+  const computedHash = await hashPassword(password);
+  return computedHash === hash;
 }
 
 export function getTokenFromCookies(cookieHeader: string | null): string | null {
