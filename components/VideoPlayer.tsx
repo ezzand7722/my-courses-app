@@ -22,6 +22,9 @@ export default function VideoPlayer({ streamUid, videoUrl, title }: VideoPlayerP
     );
   }
 
+  // Check if it's a direct video file (MP4, WebM, MOV, or direct URL)
+  const isDirectVideo = url.match(/\.(mp4|webm|ogg|mov)($|\?)/i) || (!url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('vimeo.com') && !url.includes('/embed/'));
+
   // Parse YouTube or Vimeo URL
   let embedUrl = url;
   if (url.includes('youtube.com/watch?v=')) {
@@ -46,13 +49,23 @@ export default function VideoPlayer({ streamUid, videoUrl, title }: VideoPlayerP
         </div>
       )}
       <div className="video-container" style={{ borderRadius: title ? '0 0 16px 16px' : 16 }}>
-        <iframe
-          src={embedUrl}
-          style={{ border: 'none', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
-          allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
-          allowFullScreen
-          title={title || 'فيديو الدرس'}
-        />
+        {isDirectVideo ? (
+          <video
+            src={url}
+            controls
+            controlsList="nodownload"
+            autoPlay
+            style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, objectFit: 'contain', background: '#000' }}
+          />
+        ) : (
+          <iframe
+            src={embedUrl}
+            style={{ border: 'none', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+            allowFullScreen
+            title={title || 'فيديو الدرس'}
+          />
+        )}
       </div>
     </div>
   );
