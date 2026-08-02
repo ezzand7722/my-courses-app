@@ -78,8 +78,9 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error('Register error:', error);
+    const msg = error instanceof Error ? error.message : String(error);
     return NextResponse.json(
-      { error: 'حدث خطأ في الخادم، يرجى المحاولة مرة أخرى' },
+      { error: `خطأ في الخادم: ${msg}` },
       { status: 500 }
     );
   }
