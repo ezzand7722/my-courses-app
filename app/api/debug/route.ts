@@ -15,14 +15,15 @@ export async function GET() {
     });
   } catch (error) {
     return NextResponse.json({
-      status: 'error',
+      status: 'error_caught',
       message: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       globalThisKeys: Object.keys(globalThis),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hasDBOnGlobalThis: typeof (globalThis as any).DB !== 'undefined',
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       hasDBOnEnv: typeof (globalThis as any).__env__?.DB !== 'undefined',
-    }, { status: 500 });
+    }, { status: 200 }); // Always 200 so browser renders JSON text directly
   }
 }
