@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getDB } from '@/lib/db';
 
 export const runtime = 'edge';
 
@@ -11,10 +12,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ courses: [], teachers: [] });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = (globalThis as any).__env__?.DB || (process.env as any).DB;
-    if (!db) return NextResponse.json({ courses: [], teachers: [] });
-
+    const db = getDB();
     const searchTerm = `%${q}%`;
 
     const courses = await db.prepare(`
@@ -30,8 +28,12 @@ export async function GET(request: NextRequest) {
     `).bind(searchTerm, searchTerm, searchTerm).all();
 
     const teachers = await db.prepare(`
-      SELECT id, name, avatar_url, bio FROM users
-      WHERE role IN ('teacher', 'admin') AND (name LIKE ? OR bio LIKE ?)
+      SELECT u.id, u.name, u.avatar_url, u.bio,
+             COUNT(c.id) as course_count
+      FROM users u
+      LEFT JOIN courses c ON c.teacher_id = u.id AND c.is_published = 1
+      WHERE u.role IN ('teacher', 'admin') AND (u.name LIKE ? OR u.bio LIKE ?)
+      GROUP BY u.id
       LIMIT 10
     `).bind(searchTerm, searchTerm).all();
 

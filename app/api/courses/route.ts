@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken, getTokenFromCookies } from '@/lib/auth';
+import { getDB } from '@/lib/db';
 
 export const runtime = 'edge';
 
 export async function GET(request: NextRequest) {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = (globalThis as any).__env__?.DB || (process.env as any).DB;
-    if (!db) {
-      return NextResponse.json({ courses: [] });
-    }
+    const db = getDB();
 
     const { searchParams } = new URL(request.url);
     const subject = searchParams.get('subject');
@@ -62,9 +59,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'العنوان والمادة مطلوبان' }, { status: 400 });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = (globalThis as any).__env__?.DB || (process.env as any).DB;
-    if (!db) return NextResponse.json({ error: 'DB unavailable' }, { status: 500 });
+    const db = getDB();
 
     const courseId = crypto.randomUUID();
     const now = new Date().toISOString();

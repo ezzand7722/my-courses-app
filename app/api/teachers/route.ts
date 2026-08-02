@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
+import { getDB } from '@/lib/db';
 
 export const runtime = 'edge';
 
 export async function GET() {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = (globalThis as any).__env__?.DB || (process.env as any).DB;
-    if (!db) return NextResponse.json({ teachers: [] });
+    const db = getDB();
 
     const result = await db.prepare(`
       SELECT u.id, u.name, u.email, u.avatar_url, u.bio, u.created_at,
