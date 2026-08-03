@@ -71,21 +71,33 @@ export default function TeacherDashboard() {
     }
     setUploadingAvatar(true);
     try {
+      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 
+                         (typeof window !== 'undefined' ? localStorage.getItem('cloudinary_cloud_name') : '') || 
+                         'uyiqzoyc';
+      const presetName = 'coursething';
+
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('folder', 'avatars');
-      const res = await fetch('/api/upload/r2', { method: 'POST', body: formData });
+      formData.append('upload_preset', presetName);
+
+      const uploadUrl = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+      const res = await fetch(uploadUrl, {
+        method: 'POST',
+        body: formData
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'فشل الرفع');
+      if (!res.ok) throw new Error(data.error?.message || 'فشل الرفع إلى Cloudinary');
+
+      const imageUrl = data.secure_url || data.url;
 
       // Update profile via API
       const updateRes = await fetch('/api/auth/me', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ avatar_url: data.url }),
+        body: JSON.stringify({ avatar_url: imageUrl }),
       });
       if (updateRes.ok) {
-        setUser(prev => prev ? { ...prev, avatar_url: data.url } : prev);
+        setUser(prev => prev ? { ...prev, avatar_url: imageUrl } : prev);
         showToast('تم تحديث الصورة الشخصية بنجاح');
       } else {
         throw new Error('فشل تحديث الملف الشخصي');
