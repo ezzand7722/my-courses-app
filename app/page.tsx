@@ -70,7 +70,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="hero-gradient" style={{ padding: '80px 0 64px' }}>
+      <section className="hero-gradient" style={{ padding: 'clamp(40px, 8vw, 80px) 0 clamp(32px, 6vw, 64px)' }}>
         <div className="container" style={{ textAlign: 'center' }}>
           <div className="animate-fade-in">
             <div style={{

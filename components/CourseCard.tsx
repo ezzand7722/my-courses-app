@@ -68,8 +68,8 @@ export default function CourseCard({
         {/* Content */}
         <div style={{ padding: '14px 16px' }}>
           <h3 style={{
-            fontSize: 15, fontWeight: 700, color: '#1A1D23',
-            lineHeight: 1.4, marginBottom: 10,
+            fontSize: 'clamp(12px, 3.5vw, 15px)', fontWeight: 700, color: '#1A1D23',
+            lineHeight: 1.4, marginBottom: 8,
             display: '-webkit-box',
             WebkitLineClamp: 2,
             WebkitBoxOrient: 'vertical',

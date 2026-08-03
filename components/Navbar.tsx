@@ -69,8 +69,10 @@ export default function Navbar() {
       top: 0,
       zIndex: 100,
       boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+      overflow: 'hidden',
+      maxWidth: '100vw',
     }}>
-      <div className="container" style={{ display: 'flex', alignItems: 'center', height: 68, gap: 16 }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', height: 60, gap: 8, overflow: 'hidden' }}>
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -111,8 +113,8 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Search bar */}
-        <form onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: 0, flex: '0 0 auto' }}>
+        {/* Search bar - desktop only */}
+        <form className="desktop-search" onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: 0, flex: '0 0 auto' }}>
           <div style={{
             display: 'flex', alignItems: 'center',
             background: '#F3F4F6',
@@ -142,8 +144,8 @@ export default function Navbar() {
           </div>
         </form>
 
-        {/* Auth area */}
-        <div ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
+        {/* Auth area - desktop only */}
+        <div className="desktop-auth" ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
           {user ? (
             <>
               <button
@@ -227,9 +229,11 @@ export default function Navbar() {
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="القائمة"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            padding: 8, fontSize: 22, display: 'none',
+            padding: '6px 8px', fontSize: 22, display: 'none',
+            flexShrink: 0, lineHeight: 1,
           }}
         >
           {menuOpen ? '✕' : '☰'}
@@ -241,8 +245,34 @@ export default function Navbar() {
         <div className="mobile-menu animate-fade-in" style={{
           background: 'white',
           borderTop: '1px solid #E5E7EB',
-          padding: '16px 24px',
+          padding: '12px 16px 16px',
         }}>
+          {/* Mobile search */}
+          <form onSubmit={handleSearch} style={{ marginBottom: 12 }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              background: '#F3F4F6', borderRadius: 10,
+              padding: '0 12px', gap: 8,
+            }}>
+              <input
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="بحث عن دورة..."
+                style={{
+                  background: 'none', border: 'none', outline: 'none',
+                  padding: '10px 0', fontSize: 14,
+                  fontFamily: 'Cairo, sans-serif',
+                  width: '100%', textAlign: 'right', color: '#1A1D23',
+                }}
+              />
+              <button type="submit" style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: '#6B7280', padding: 0, fontSize: 16, flexShrink: 0,
+              }}>🔍</button>
+            </div>
+          </form>
+
+          {/* Nav links */}
           {navLinks.map(link => (
             <Link
               key={link.href}
@@ -250,10 +280,10 @@ export default function Navbar() {
               onClick={() => setMenuOpen(false)}
               style={{
                 display: 'block',
-                padding: '12px 0',
+                padding: '11px 0',
                 textDecoration: 'none',
                 fontWeight: 600,
-                fontSize: 16,
+                fontSize: 15,
                 color: pathname === link.href ? '#2F6FED' : '#374151',
                 borderBottom: '1px solid #F3F4F6',
               }}
@@ -261,16 +291,31 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <form onSubmit={handleSearch} style={{ marginTop: 12 }}>
-            <input
-              className="input-field"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              placeholder="بحث عن دورة..."
-            />
-          </form>
-          {!user && (
-            <Link href="/teacher/login" style={{ display: 'block', marginTop: 12 }}>
+
+          {/* Auth */}
+          {user ? (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1D23', marginBottom: 8 }}>
+                👋 {user.name}
+              </div>
+              <Link href="/teacher/dashboard" onClick={() => setMenuOpen(false)} style={{
+                display: 'block', padding: '10px 0',
+                textDecoration: 'none', color: '#374151',
+                fontSize: 14, fontWeight: 500,
+                borderBottom: '1px solid #F3F4F6',
+              }}>📊 لوحة التحكم</Link>
+              <button
+                onClick={handleLogout}
+                style={{
+                  width: '100%', textAlign: 'right', padding: '10px 0',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 14, fontWeight: 500, color: '#EF4444',
+                  fontFamily: 'Cairo, sans-serif',
+                }}
+              >🚪 تسجيل خروج</button>
+            </div>
+          ) : (
+            <Link href="/teacher/login" style={{ display: 'block', marginTop: 12 }} onClick={() => setMenuOpen(false)}>
               <button className="btn-primary" style={{ width: '100%' }}>
                 تسجيل دخول كمعلم
               </button>
@@ -282,6 +327,8 @@ export default function Navbar() {
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
+          .desktop-search { display: none !important; }
+          .desktop-auth { display: none !important; }
           .hamburger { display: block !important; }
         }
         @media (min-width: 769px) {
