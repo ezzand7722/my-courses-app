@@ -358,7 +358,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      <div className="container" style={{ padding: '32px 24px' }}>
+      <div className="container" style={{ paddingTop: 32, paddingBottom: 32 }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: 32 }}>
 
           {/* Left: Lessons management */}

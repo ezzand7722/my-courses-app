@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import DarkModeToggle from './DarkModeToggle';
 
 interface User {
   id: string;
@@ -63,13 +64,12 @@ export default function Navbar() {
 
   return (
     <nav style={{
-      background: 'white',
-      borderBottom: '1px solid #E5E7EB',
+      background: 'var(--nav-bg)',
+      borderBottom: '1px solid var(--nav-border)',
       position: 'sticky',
       top: 0,
       zIndex: 100,
       boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
-      overflow: 'hidden',
       maxWidth: '100vw',
     }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', height: 60, gap: 8, overflow: 'hidden' }}>
@@ -85,8 +85,8 @@ export default function Navbar() {
               <span style={{ color: 'white', fontSize: 20 }}>🎓</span>
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16, color: '#1A1D23', lineHeight: 1 }}>منصة تعلم</div>
-              <div style={{ fontSize: 10, color: '#6B7280', lineHeight: 1 }}>تعلم بلا حدود</div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: 'var(--text)', lineHeight: 1 }}>منصة تعلم</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1 }}>تعلم بلا حدود</div>
             </div>
           </div>
         </Link>
@@ -103,7 +103,7 @@ export default function Navbar() {
                 borderRadius: 8,
                 fontWeight: 600,
                 fontSize: 15,
-                color: pathname === link.href ? '#2F6FED' : '#374151',
+                color: pathname === link.href ? 'var(--primary)' : 'var(--text)',
                 background: pathname === link.href ? 'rgba(47,111,237,0.08)' : 'transparent',
                 transition: 'all 0.15s ease',
               }}
@@ -117,11 +117,12 @@ export default function Navbar() {
         <form className="desktop-search" onSubmit={handleSearch} style={{ display: 'flex', alignItems: 'center', gap: 0, flex: '0 0 auto' }}>
           <div style={{
             display: 'flex', alignItems: 'center',
-            background: '#F3F4F6',
+            background: 'var(--feature-card-bg)',
             borderRadius: 10,
             padding: '0 12px',
             gap: 8,
             width: 200,
+            border: '1px solid var(--border)',
           }}>
             <input
               value={searchQuery}
@@ -132,17 +133,22 @@ export default function Navbar() {
                 padding: '9px 0', fontSize: 14,
                 fontFamily: 'Cairo, sans-serif',
                 width: '100%', textAlign: 'right',
-                color: '#1A1D23',
+                color: 'var(--text)',
               }}
             />
             <button type="submit" style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              color: '#6B7280', padding: 0, fontSize: 16, flexShrink: 0,
+              color: 'var(--text-muted)', padding: 0, fontSize: 16, flexShrink: 0,
             }}>
               🔍
             </button>
           </div>
         </form>
+
+        {/* Dark mode toggle - desktop */}
+        <div className="desktop-search" style={{ flexShrink: 0 }}>
+          <DarkModeToggle />
+        </div>
 
         {/* Auth area - desktop only */}
         <div className="desktop-auth" ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
@@ -152,7 +158,7 @@ export default function Navbar() {
                 onClick={() => setProfileOpen(!profileOpen)}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
-                  background: 'none', border: '1.5px solid #E5E7EB',
+                  background: 'none', border: '1.5px solid var(--border)',
                   borderRadius: 10, padding: '6px 12px',
                   cursor: 'pointer', fontFamily: 'Cairo, sans-serif',
                 }}
@@ -171,30 +177,30 @@ export default function Navbar() {
                     </span>
                   )}
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1D23' }}>{user.name}</span>
-                <span style={{ fontSize: 10, color: '#6B7280' }}>▼</span>
+                <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{user.name}</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>▼</span>
               </button>
 
               {profileOpen && (
                 <div className="animate-fade-in" style={{
                   position: 'absolute',
-                  top: '100%', left: 0, // RTL: opens to left
+                  top: '100%', left: 0,
                   marginTop: 8,
-                  background: 'white',
+                  background: 'var(--dropdown-bg)',
                   borderRadius: 12,
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-                  border: '1px solid #E5E7EB',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+                  border: '1px solid var(--dropdown-border)',
                   minWidth: 200,
                   overflow: 'hidden',
                   zIndex: 200,
                 }}>
-                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #F3F4F6' }}>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{user.name}</div>
-                    <div style={{ fontSize: 12, color: '#6B7280' }}>{user.email}</div>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--text)' }}>{user.name}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{user.email}</div>
                   </div>
                   <Link href="/teacher/dashboard" style={{
                     display: 'block', padding: '10px 16px',
-                    textDecoration: 'none', color: '#374151',
+                    textDecoration: 'none', color: 'var(--text)',
                     fontSize: 14, fontWeight: 500,
                     transition: 'background 0.15s',
                   }}
@@ -233,7 +239,7 @@ export default function Navbar() {
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
             padding: '6px 8px', fontSize: 22, display: 'none',
-            flexShrink: 0, lineHeight: 1,
+            flexShrink: 0, lineHeight: 1, color: 'var(--text)',
           }}
         >
           {menuOpen ? '✕' : '☰'}
@@ -243,16 +249,17 @@ export default function Navbar() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="mobile-menu animate-fade-in" style={{
-          background: 'white',
-          borderTop: '1px solid #E5E7EB',
+          background: 'var(--nav-bg)',
+          borderTop: '1px solid var(--nav-border)',
           padding: '12px 16px 16px',
         }}>
           {/* Mobile search */}
           <form onSubmit={handleSearch} style={{ marginBottom: 12 }}>
             <div style={{
               display: 'flex', alignItems: 'center',
-              background: '#F3F4F6', borderRadius: 10,
+              background: 'var(--feature-card-bg)', borderRadius: 10,
               padding: '0 12px', gap: 8,
+              border: '1px solid var(--border)',
             }}>
               <input
                 value={searchQuery}
@@ -262,12 +269,12 @@ export default function Navbar() {
                   background: 'none', border: 'none', outline: 'none',
                   padding: '10px 0', fontSize: 14,
                   fontFamily: 'Cairo, sans-serif',
-                  width: '100%', textAlign: 'right', color: '#1A1D23',
+                  width: '100%', textAlign: 'right', color: 'var(--text)',
                 }}
               />
               <button type="submit" style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: '#6B7280', padding: 0, fontSize: 16, flexShrink: 0,
+                color: 'var(--text-muted)', padding: 0, fontSize: 16, flexShrink: 0,
               }}>🔍</button>
             </div>
           </form>
@@ -284,8 +291,8 @@ export default function Navbar() {
                 textDecoration: 'none',
                 fontWeight: 600,
                 fontSize: 15,
-                color: pathname === link.href ? '#2F6FED' : '#374151',
-                borderBottom: '1px solid #F3F4F6',
+                color: pathname === link.href ? 'var(--primary)' : 'var(--text)',
+                borderBottom: '1px solid var(--border)',
               }}
             >
               {link.label}
@@ -295,14 +302,14 @@ export default function Navbar() {
           {/* Auth */}
           {user ? (
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1D23', marginBottom: 8 }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 8 }}>
                 👋 {user.name}
               </div>
               <Link href="/teacher/dashboard" onClick={() => setMenuOpen(false)} style={{
                 display: 'block', padding: '10px 0',
-                textDecoration: 'none', color: '#374151',
+                textDecoration: 'none', color: 'var(--text)',
                 fontSize: 14, fontWeight: 500,
-                borderBottom: '1px solid #F3F4F6',
+                borderBottom: '1px solid var(--border)',
               }}>📊 لوحة التحكم</Link>
               <button
                 onClick={handleLogout}
@@ -321,6 +328,12 @@ export default function Navbar() {
               </button>
             </Link>
           )}
+
+          {/* Dark mode in mobile menu */}
+          <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500 }}>الوضع الليلي</span>
+            <DarkModeToggle />
+          </div>
         </div>
       )}
 

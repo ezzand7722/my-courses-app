@@ -10,6 +10,7 @@ export default function TeacherLoginPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -48,14 +49,14 @@ export default function TeacherLoginPage() {
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(135deg, #EBF2FF 0%, #F0FFFE 100%)',
+      background: 'var(--hero-gradient)',
       padding: 24,
     }}>
       <div style={{
-        background: 'white', borderRadius: 20,
+        background: 'var(--card-bg)', borderRadius: 20,
         padding: '40px 36px', width: '100%', maxWidth: 420,
         boxShadow: '0 8px 40px rgba(47,111,237,0.12)',
-        border: '1px solid #E5E7EB',
+        border: '1px solid var(--border)',
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -67,8 +68,8 @@ export default function TeacherLoginPage() {
           }}>
             🎓
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>تسجيل دخول المعلم</h1>
-          <p style={{ fontSize: 14, color: '#6B7280' }}>بريدك الإلكتروني وكلمة المرور للدخول</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4, color: 'var(--text)' }}>تسجيل دخول المعلم</h1>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>بريدك الإلكتروني وكلمة المرور للدخول</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -83,7 +84,7 @@ export default function TeacherLoginPage() {
           )}
 
           <div style={{ marginBottom: 16 }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
               البريد الإلكتروني
             </label>
             <input
@@ -100,17 +101,28 @@ export default function TeacherLoginPage() {
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
               كلمة المرور
             </label>
-            <input
-              className={`input-field ${errors.password ? 'error' : ''}`}
-              type="password"
-              placeholder="••••••••"
-              value={form.password}
-              onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-              disabled={loading}
-            />
+            <div className="password-wrapper">
+              <input
+                className={`input-field ${errors.password ? 'error' : ''}`}
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={form.password}
+                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                disabled={loading}
+                style={{ paddingLeft: 44 }}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(s => !s)}
+                tabIndex={-1}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
             {errors.password && (
               <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.password}</div>
             )}
@@ -126,19 +138,18 @@ export default function TeacherLoginPage() {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: '#6B7280' }}>
+        <div style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--text-muted)' }}>
           ليس لديك حساب؟{' '}
-          <Link href="/teacher/register" style={{ color: '#2F6FED', fontWeight: 600, textDecoration: 'none' }}>
+          <Link href="/teacher/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
             سجّل كمعلم جديد
           </Link>
         </div>
 
         <div style={{ textAlign: 'center', marginTop: 12 }}>
-          <Link href="/" style={{ fontSize: 13, color: '#9CA3AF', textDecoration: 'none' }}>
+          <Link href="/" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>
             ← العودة للصفحة الرئيسية
           </Link>
         </div>
       </div>
     </div>
   );
-}

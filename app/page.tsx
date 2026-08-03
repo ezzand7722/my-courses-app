@@ -75,7 +75,7 @@ export default function HomePage() {
           <div className="animate-fade-in">
             <div style={{
               display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(47,111,237,0.1)', color: '#2F6FED',
+              background: 'rgba(47,111,237,0.1)', color: 'var(--primary)',
               borderRadius: 20, padding: '6px 16px', fontSize: 13, fontWeight: 600,
               marginBottom: 24,
             }}>
@@ -84,7 +84,7 @@ export default function HomePage() {
 
             <h1 style={{
               fontSize: 'clamp(32px, 5vw, 56px)',
-              fontWeight: 900, color: '#1A1D23',
+              fontWeight: 900, color: 'var(--text)',
               lineHeight: 1.2, marginBottom: 20,
             }}>
               تعلّم مع أفضل المعلمين
@@ -99,7 +99,7 @@ export default function HomePage() {
             </h1>
 
             <p style={{
-              fontSize: 18, color: '#6B7280', maxWidth: 520,
+              fontSize: 18, color: 'var(--text-muted)', maxWidth: 520,
               margin: '0 auto 32px', lineHeight: 1.7,
             }}>
               اكتشف مئات الدورات في مختلف المواضيع، شاهد الفيديوهات مباشرة، وطوّر مهاراتك بلا أي تكلفة.
@@ -129,8 +129,8 @@ export default function HomePage() {
                 { num: '100%', label: 'مجاني' },
               ].map((stat, i) => (
                 <div key={i} style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, fontWeight: 900, color: '#2F6FED' }}>{stat.num}</div>
-                  <div style={{ fontSize: 14, color: '#6B7280' }}>{stat.label}</div>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: 'var(--primary)' }}>{stat.num}</div>
+                  <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -139,7 +139,7 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'var(--section-alt-bg)' }}>
         <div className="container">
           <div style={{
             display: 'grid',
@@ -149,12 +149,12 @@ export default function HomePage() {
             {features.map((f, i) => (
               <div key={i} style={{
                 textAlign: 'center', padding: 24,
-                background: '#F7F8FA', borderRadius: 16,
-                border: '1px solid #E5E7EB',
+                background: 'var(--feature-card-bg)', borderRadius: 16,
+                border: '1px solid var(--border)',
               }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>{f.icon}</div>
-                <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{f.title}</h3>
-                <p style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.5 }}>{f.desc}</p>
+                <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>{f.title}</h3>
+                <p style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.5 }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -165,8 +165,8 @@ export default function HomePage() {
       <section className="section" id="courses">
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8 }}>أهم دوراتنا</h2>
-            <p style={{ color: '#6B7280', fontSize: 16 }}>اختر من دوراتنا المتنوعة في كل المواضيع</p>
+            <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, color: 'var(--text)' }}>أهم دوراتنا</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: 16 }}>اختر من دوراتنا المتنوعة في كل المواضيع</p>
           </div>
 
           {/* Subject filters */}
@@ -179,8 +179,8 @@ export default function HomePage() {
               style={{
                 padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
                 fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                background: !selectedSubject ? '#2F6FED' : '#F3F4F6',
-                color: !selectedSubject ? 'white' : '#374151',
+                background: !selectedSubject ? 'var(--primary)' : 'var(--feature-card-bg)',
+                color: !selectedSubject ? 'white' : 'var(--text)',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -193,8 +193,8 @@ export default function HomePage() {
                 style={{
                   padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
                   fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                  background: selectedSubject === s.id ? '#2F6FED' : '#F3F4F6',
-                  color: selectedSubject === s.id ? 'white' : '#374151',
+                  background: selectedSubject === s.id ? 'var(--primary)' : 'var(--feature-card-bg)',
+                  color: selectedSubject === s.id ? 'white' : 'var(--text)',
                   transition: 'all 0.2s ease',
                 }}
               >
@@ -223,11 +223,11 @@ export default function HomePage() {
       </section>
 
       {/* Teachers preview */}
-      <section className="section" style={{ background: 'white' }}>
+      <section className="section" style={{ background: 'var(--section-alt-bg)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8 }}>معلمونا المتميزون</h2>
-            <p style={{ color: '#6B7280', fontSize: 16 }}>نخبة من أفضل المعلمين في مجالاتهم</p>
+            <h2 style={{ fontSize: 32, fontWeight: 800, marginBottom: 8, color: 'var(--text)' }}>معلمونا المتميزون</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: 16 }}>نخبة من أفضل المعلمين في مجالاتهم</p>
           </div>
 
           {loadingTeachers ? (
@@ -282,7 +282,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer style={{
-        background: '#1A1D23', color: 'white',
+        background: 'var(--footer-bg)', color: 'white',
         padding: '48px 0 24px',
       }}>
         <div className="container">
@@ -293,7 +293,7 @@ export default function HomePage() {
           }}>
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 12 }}>🎓 منصة تعلّم</div>
-              <p style={{ fontSize: 14, color: '#9CA3AF', lineHeight: 1.6 }}>
+              <p style={{ fontSize: 14, color: 'var(--footer-text)', lineHeight: 1.6 }}>
                 منصة تعليمية مجانية تجمع بين المعلمين والطلاب.
               </p>
             </div>
@@ -302,7 +302,7 @@ export default function HomePage() {
               {[['/', 'الرئيسية'], ['/courses', 'الدورات'], ['/teachers', 'المعلمون'], ['/search', 'البحث']].map(([href, label]) => (
                 <a key={href} href={href} style={{
                   display: 'block', fontSize: 14,
-                  color: '#9CA3AF', textDecoration: 'none',
+                  color: 'var(--footer-text)', textDecoration: 'none',
                   marginBottom: 8, transition: 'color 0.15s',
                 }}>
                   {label}
@@ -314,7 +314,7 @@ export default function HomePage() {
               {[['/teacher/login', 'تسجيل الدخول'], ['/teacher/register', 'إنشاء حساب'], ['/teacher/dashboard', 'لوحة التحكم']].map(([href, label]) => (
                 <a key={href} href={href} style={{
                   display: 'block', fontSize: 14,
-                  color: '#9CA3AF', textDecoration: 'none',
+                  color: 'var(--footer-text)', textDecoration: 'none',
                   marginBottom: 8,
                 }}>
                   {label}
@@ -323,8 +323,8 @@ export default function HomePage() {
             </div>
           </div>
           <div style={{
-            borderTop: '1px solid #374151', paddingTop: 20,
-            textAlign: 'center', fontSize: 14, color: '#6B7280',
+            borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20,
+            textAlign: 'center', fontSize: 14, color: 'var(--footer-text)',
           }}>
             © {new Date().getFullYear()} منصة تعلّم — جميع الدورات مجانية 🎓
           </div>

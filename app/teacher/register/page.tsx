@@ -10,6 +10,8 @@ export default function TeacherRegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -49,24 +51,17 @@ export default function TeacherRegisterPage() {
     }
   };
 
-  const fields = [
-    { key: 'name', label: 'الاسم الكامل', type: 'text', placeholder: 'مثلاً: أحمد محمد' },
-    { key: 'email', label: 'البريد الإلكتروني', type: 'email', placeholder: 'teacher@example.com' },
-    { key: 'password', label: 'كلمة المرور', type: 'password', placeholder: 'على الأقل 8 أحرف' },
-    { key: 'confirm', label: 'تأكيد كلمة المرور', type: 'password', placeholder: 'أعد كتابة كلمة المرور' },
-  ] as const;
-
   return (
     <div style={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(135deg, #EBF2FF 0%, #F0FFFE 100%)',
+      background: 'var(--hero-gradient)',
       padding: 24,
     }}>
       <div style={{
-        background: 'white', borderRadius: 20,
+        background: 'var(--card-bg)', borderRadius: 20,
         padding: '40px 36px', width: '100%', maxWidth: 440,
         boxShadow: '0 8px 40px rgba(47,111,237,0.12)',
-        border: '1px solid #E5E7EB',
+        border: '1px solid var(--border)',
       }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
@@ -77,8 +72,8 @@ export default function TeacherRegisterPage() {
           }}>
             🎓
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>تسجيل كمعلم جديد</h1>
-          <p style={{ fontSize: 14, color: '#6B7280' }}>أنشئ حسابك وابدأ نشر دوراتك</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4, color: 'var(--text)' }}>تسجيل كمعلم جديد</h1>
+          <p style={{ fontSize: 14, color: 'var(--text-muted)' }}>أنشئ حسابك وابدأ نشر دوراتك</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -92,29 +87,86 @@ export default function TeacherRegisterPage() {
             </div>
           )}
 
-          {fields.map(field => (
-            <div key={field.key} style={{ marginBottom: 16 }}>
-              <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6 }}>
-                {field.label}
-              </label>
+          {/* Name */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
+              الاسم الكامل
+            </label>
+            <input
+              className={`input-field ${errors.name ? 'error' : ''}`}
+              type="text"
+              placeholder="مثلاً: أحمد محمد"
+              value={form.name}
+              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+              disabled={loading}
+            />
+            {errors.name && <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.name}</div>}
+          </div>
+
+          {/* Email */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
+              البريد الإلكتروني
+            </label>
+            <input
+              className={`input-field ${errors.email ? 'error' : ''}`}
+              type="email"
+              placeholder="teacher@example.com"
+              value={form.email}
+              onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+              disabled={loading}
+            />
+            {errors.email && <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.email}</div>}
+          </div>
+
+          {/* Password */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
+              كلمة المرور
+            </label>
+            <div className="password-wrapper">
               <input
-                className={`input-field ${errors[field.key] ? 'error' : ''}`}
-                type={field.type}
-                placeholder={field.placeholder}
-                value={form[field.key]}
-                onChange={e => setForm(p => ({ ...p, [field.key]: e.target.value }))}
+                className={`input-field ${errors.password ? 'error' : ''}`}
+                type={showPassword ? 'text' : 'password'}
+                placeholder="على الأقل 8 أحرف"
+                value={form.password}
+                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 disabled={loading}
+                style={{ paddingLeft: 44 }}
               />
-              {errors[field.key] && (
-                <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors[field.key]}</div>
-              )}
+              <button type="button" className="password-toggle" onClick={() => setShowPassword(s => !s)} tabIndex={-1}>
+                {showPassword ? '🙈' : '👁️'}
+              </button>
             </div>
-          ))}
+            {errors.password && <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.password}</div>}
+          </div>
+
+          {/* Confirm */}
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontWeight: 600, fontSize: 14, marginBottom: 6, color: 'var(--text)' }}>
+              تأكيد كلمة المرور
+            </label>
+            <div className="password-wrapper">
+              <input
+                className={`input-field ${errors.confirm ? 'error' : ''}`}
+                type={showConfirm ? 'text' : 'password'}
+                placeholder="أعد كتابة كلمة المرور"
+                value={form.confirm}
+                onChange={e => setForm(p => ({ ...p, confirm: e.target.value }))}
+                disabled={loading}
+                style={{ paddingLeft: 44 }}
+              />
+              <button type="button" className="password-toggle" onClick={() => setShowConfirm(s => !s)} tabIndex={-1}>
+                {showConfirm ? '🙈' : '👁️'}
+              </button>
+            </div>
+            {errors.confirm && <div style={{ color: '#EF4444', fontSize: 12, marginTop: 4 }}>{errors.confirm}</div>}
+          </div>
 
           <div style={{
-            background: '#F0FDF4', borderRadius: 10, padding: '10px 14px',
-            fontSize: 13, color: '#16A34A', marginBottom: 20,
-            border: '1px solid #BBF7D0',
+            background: 'rgba(16,185,129,0.1)', borderRadius: 10, padding: '10px 14px',
+            fontSize: 13, color: '#10B981', marginBottom: 20,
+            border: '1px solid rgba(16,185,129,0.2)',
           }}>
             ✅ سيتم منحك صلاحية إنشاء الدورات ورفع الفيديوهات فور التسجيل
           </div>
@@ -129,14 +181,14 @@ export default function TeacherRegisterPage() {
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: '#6B7280' }}>
+        <div style={{ textAlign: 'center', marginTop: 24, fontSize: 14, color: 'var(--text-muted)' }}>
           لديك حساب بالفعل؟{' '}
-          <Link href="/teacher/login" style={{ color: '#2F6FED', fontWeight: 600, textDecoration: 'none' }}>
+          <Link href="/teacher/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>
             تسجيل الدخول
           </Link>
         </div>
         <div style={{ textAlign: 'center', marginTop: 12 }}>
-          <Link href="/" style={{ fontSize: 13, color: '#9CA3AF', textDecoration: 'none' }}>
+          <Link href="/" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>
             ← العودة للصفحة الرئيسية
           </Link>
         </div>

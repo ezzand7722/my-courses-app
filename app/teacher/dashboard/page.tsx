@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
@@ -32,6 +32,8 @@ export default function TeacherDashboard() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -39,7 +41,6 @@ export default function TeacherDashboard() {
   };
 
   useEffect(() => {
-    // Check auth
     fetch('/api/auth/me')
       .then(r => r.json())
       .then(async data => {
@@ -48,7 +49,6 @@ export default function TeacherDashboard() {
           return;
         }
         setUser(data.user);
-        // Fetch courses
         const coursesRes = await fetch(`/api/courses?teacher_id=${data.user.id}&published=false`);
         const coursesData = await coursesRes.json();
         setCourses(coursesData.courses || []);
@@ -58,6 +58,60 @@ export default function TeacherDashboard() {
         router.replace('/teacher/login');
       });
   }, [router]);
+
+  const handleAvatarUpload = async (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      showToast('يرجى اختيار صورة', 'error');
+      return;
+    }
+    setUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'avatars');
+      const res = await fetch('/api/upload/r2', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'فشل الرفع');
+
+      // Update profile via API
+      const updateRes = await fetch('/api/auth/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: data.url }),
+      });
+      if (updateRes.ok) {
+        setUser(prev => prev ? { ...prev, avatar_url: data.url } : prev);
+        showToast('تم تحديث الصورة الشخصية بنجاح');
+      } else {
+        throw new Error('فشل تحديث الملف الشخصي');
+      }
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'فشل رفع الصورة', 'error');
+    } finally {
+      setUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = '';
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!confirm('هل تريد حذف صورتك الشخصية؟')) return;
+    setUploadingAvatar(true);
+    try {
+      const res = await fetch('/api/auth/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatar_url: null }),
+      });
+      if (res.ok) {
+        setUser(prev => prev ? { ...prev, avatar_url: undefined } : prev);
+        showToast('تم حذف الصورة الشخصية');
+      }
+    } catch {
+      showToast('فشل حذف الصورة', 'error');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   const handleTogglePublish = async (course: Course) => {
     setTogglingId(course.id);
@@ -118,6 +172,15 @@ export default function TeacherDashboard() {
     <>
       <Navbar />
 
+      {/* Hidden avatar input */}
+      <input
+        ref={avatarInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={e => { const f = e.target.files?.[0]; if (f) handleAvatarUpload(f); }}
+      />
+
       {/* Toast */}
       {toast && (
         <div style={{
@@ -135,23 +198,91 @@ export default function TeacherDashboard() {
 
       {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #EBF2FF, #F0FFFE)',
+        background: 'var(--hero-gradient)',
         padding: '32px 0 24px',
+        borderBottom: '1px solid var(--border)',
       }}>
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
-            <div>
-              <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 4 }}>
-                مرحباً {user?.name} 👋
-              </h1>
-              <p style={{ color: '#6B7280', fontSize: 15 }}>
-                لديك {courses.length} دورة — منها {courses.filter(c => c.is_published).length} منشورة
-              </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              {/* Avatar with upload */}
+              <div className="photo-upload-area" style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    width: 72, height: 72, borderRadius: '50%',
+                    background: user?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
+                    overflow: 'hidden',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    border: '3px solid var(--border)',
+                    cursor: 'pointer',
+                    position: 'relative',
+                  }}
+                  onClick={() => !uploadingAvatar && avatarInputRef.current?.click()}
+                  title="انقر لتغيير الصورة"
+                >
+                  {user?.avatar_url ? (
+                    <img src={user.avatar_url} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    <span style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{user?.name.charAt(0)}</span>
+                  )}
+                  {/* Overlay */}
+                  <div style={{
+                    position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.45)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: '50%', opacity: uploadingAvatar ? 1 : 0,
+                    transition: 'opacity 0.2s',
+                  }} className="avatar-overlay">
+                    {uploadingAvatar ? (
+                      <div className="spinner" style={{ width: 20, height: 20 }} />
+                    ) : (
+                      <span style={{ fontSize: 20 }}>📷</span>
+                    )}
+                  </div>
+                </div>
+                {/* Avatar action buttons */}
+                <div style={{ position: 'absolute', bottom: -4, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 4 }}>
+                  <button
+                    onClick={() => avatarInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                    title="تغيير الصورة"
+                    style={{
+                      width: 22, height: 22, borderRadius: '50%',
+                      background: 'var(--primary)', color: 'white',
+                      border: '2px solid var(--card-bg)', fontSize: 10,
+                      cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                  >✏️</button>
+                  {user?.avatar_url && (
+                    <button
+                      onClick={handleDeleteAvatar}
+                      disabled={uploadingAvatar}
+                      title="حذف الصورة"
+                      style={{
+                        width: 22, height: 22, borderRadius: '50%',
+                        background: '#EF4444', color: 'white',
+                        border: '2px solid var(--card-bg)', fontSize: 10,
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >🗑</button>
+                  )}
+                </div>
+              </div>
+              <div>
+                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 2, color: 'var(--text)' }}>
+                  مرحباً، {user?.name} 👋
+                </h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+                  {courses.length} دورة — منها {courses.filter(c => c.is_published).length} منشورة
+                </p>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                  انقر على الصورة لتغييرها
+                </p>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {(user?.role === 'admin' || user?.email === 'superuser2@kilani.com') && (
                 <Link href="/teacher/admin/allowed-emails">
-                  <button className="btn-secondary" style={{ border: '1px solid #E5E7EB', background: 'white' }}>
+                  <button className="btn-secondary" style={{ border: '1px solid var(--border)', background: 'var(--card-bg)', color: 'var(--text)' }}>
                     ⚙️ إدارة المعلمين
                   </button>
                 </Link>
@@ -166,11 +297,11 @@ export default function TeacherDashboard() {
         </div>
       </div>
 
-      <div className="container" style={{ padding: '32px 24px' }}>
+      <div className="container" style={{ paddingTop: 32, paddingBottom: 32 }}>
         {/* Stats */}
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-          gap: 16, marginBottom: 32,
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+          gap: 14, marginBottom: 32,
         }}>
           {[
             { label: 'إجمالي الدورات', value: courses.length, icon: '📚' },
@@ -179,27 +310,27 @@ export default function TeacherDashboard() {
             { label: 'إجمالي الدروس', value: courses.reduce((sum, c) => sum + (c.lesson_count || 0), 0), icon: '🎬' },
           ].map((stat, i) => (
             <div key={i} style={{
-              background: 'white', borderRadius: 14, padding: '20px 16px',
-              border: '1px solid #E5E7EB', textAlign: 'center',
+              background: 'var(--card-bg)', borderRadius: 14, padding: '18px 14px',
+              border: '1px solid var(--border)', textAlign: 'center',
             }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>{stat.icon}</div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: '#2F6FED' }}>{stat.value}</div>
-              <div style={{ fontSize: 13, color: '#6B7280' }}>{stat.label}</div>
+              <div style={{ fontSize: 26, marginBottom: 6 }}>{stat.icon}</div>
+              <div style={{ fontSize: 26, fontWeight: 800, color: 'var(--primary)' }}>{stat.value}</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{stat.label}</div>
             </div>
           ))}
         </div>
 
         {/* Courses list */}
-        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16 }}>دوراتي</h2>
+        <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>دوراتي</h2>
 
         {courses.length === 0 ? (
           <div style={{
             textAlign: 'center', padding: '60px 24px',
-            background: 'white', borderRadius: 16, border: '1px solid #E5E7EB',
+            background: 'var(--card-bg)', borderRadius: 16, border: '1px solid var(--border)',
           }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>📚</div>
-            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>لم تنشئ أي دورة بعد</h3>
-            <p style={{ color: '#6B7280', marginBottom: 24 }}>ابدأ بإنشاء دورتك الأولى ورفع محتواك</p>
+            <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>لم تنشئ أي دورة بعد</h3>
+            <p style={{ color: 'var(--text-muted)', marginBottom: 24 }}>ابدأ بإنشاء دورتك الأولى ورفع محتواك</p>
             <Link href="/teacher/courses/new">
               <button className="btn-primary">+ إنشاء دورة</button>
             </Link>
@@ -208,47 +339,43 @@ export default function TeacherDashboard() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {courses.map(course => (
               <div key={course.id} style={{
-                background: 'white', borderRadius: 16, padding: '20px 24px',
-                border: '1px solid #E5E7EB',
-                display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap',
+                background: 'var(--card-bg)', borderRadius: 16, padding: '16px 20px',
+                border: '1px solid var(--border)',
+                display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap',
               }}>
                 {/* Thumbnail */}
                 <div style={{
-                  width: 72, height: 52, borderRadius: 10, flexShrink: 0, overflow: 'hidden',
-                  background: 'linear-gradient(135deg, #2F6FED22, #0FB5AE22)',
+                  width: 68, height: 50, borderRadius: 10, flexShrink: 0, overflow: 'hidden',
+                  background: 'linear-gradient(135deg, rgba(47,111,237,0.15), rgba(15,181,174,0.15))',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
                   {course.cover_image_url ? (
                     <img src={course.cover_image_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   ) : (
-                    <span style={{ fontSize: 24 }}>📚</span>
+                    <span style={{ fontSize: 22 }}>📚</span>
                   )}
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{course.title}</div>
-                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4, color: 'var(--text)' }}>{course.title}</div>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     <span style={{
-                      fontSize: 12, padding: '2px 10px', borderRadius: 20,
-                      background: course.is_published ? '#DCFCE7' : '#FEF9C3',
-                      color: course.is_published ? '#16A34A' : '#CA8A04',
+                      fontSize: 11, padding: '2px 10px', borderRadius: 20,
+                      background: course.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(245,166,35,0.12)',
+                      color: course.is_published ? '#10B981' : '#CA8A04',
                       fontWeight: 600,
                     }}>
-                      {course.is_published ? 'منشورة' : 'غير منشورة'}
+                      {course.is_published ? '✅ منشورة' : '📝 مسودة'}
                     </span>
-                    <span style={{ fontSize: 12, color: '#6B7280' }}>
-                      📹 {course.lesson_count || 0} درس
-                    </span>
-                    <span style={{ fontSize: 12, color: '#9CA3AF' }}>
-                      {formatDate(course.created_at)}
-                    </span>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>📹 {course.lesson_count || 0} درس</span>
+                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{formatDate(course.created_at)}</span>
                   </div>
                 </div>
 
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: 8, flexShrink: 0, flexWrap: 'wrap' }}>
                   <Link href={`/teacher/courses/${course.id}/edit`}>
-                    <button className="btn-secondary" style={{ fontSize: 13, padding: '7px 14px' }}>
+                    <button className="btn-secondary" style={{ fontSize: 13, padding: '7px 12px' }}>
                       ✏️ تعديل
                     </button>
                   </Link>
@@ -256,26 +383,26 @@ export default function TeacherDashboard() {
                     onClick={() => handleTogglePublish(course)}
                     disabled={togglingId === course.id}
                     style={{
-                      padding: '7px 14px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                      padding: '7px 12px', borderRadius: 10, border: 'none', cursor: 'pointer',
                       fontFamily: 'Cairo, sans-serif', fontSize: 13, fontWeight: 600,
-                      background: course.is_published ? '#FEF9C3' : '#DCFCE7',
-                      color: course.is_published ? '#CA8A04' : '#16A34A',
+                      background: course.is_published ? 'rgba(245,166,35,0.12)' : 'rgba(16,185,129,0.12)',
+                      color: course.is_published ? '#CA8A04' : '#10B981',
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    {togglingId === course.id ? '...' : course.is_published ? 'إلغاء النشر' : 'نشر'}
+                    {togglingId === course.id ? '...' : course.is_published ? 'إلغاء النشر' : '🚀 نشر'}
                   </button>
                   <button
                     onClick={() => handleDelete(course.id)}
                     disabled={deletingId === course.id}
                     style={{
-                      padding: '7px 14px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                      padding: '7px 12px', borderRadius: 10, border: 'none', cursor: 'pointer',
                       fontFamily: 'Cairo, sans-serif', fontSize: 13, fontWeight: 600,
-                      background: '#FEF2F2', color: '#EF4444',
+                      background: 'rgba(239,68,68,0.1)', color: '#EF4444',
                       transition: 'all 0.2s ease',
                     }}
                   >
-                    {deletingId === course.id ? '...' : '🗑 حذف'}
+                    {deletingId === course.id ? '...' : '🗑'}
                   </button>
                 </div>
               </div>
@@ -283,6 +410,12 @@ export default function TeacherDashboard() {
           </div>
         )}
       </div>
+
+      <style>{`
+        .photo-upload-area:hover .avatar-overlay {
+          opacity: 1 !important;
+        }
+      `}</style>
     </>
   );
 }
