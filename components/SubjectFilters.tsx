@@ -37,9 +37,10 @@ export default function SubjectFilters({ selectedSubject, setSelectedSubject }: 
         onClick={() => filtersRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
         title="التمرير لليسار"
         style={{ 
-          opacity: showLeftArrow ? 1 : 0, 
+          visibility: showLeftArrow ? 'visible' : 'hidden',
+          opacity: showLeftArrow ? 1 : 0,
           pointerEvents: showLeftArrow ? 'auto' : 'none',
-          transition: 'opacity 0.2s ease'
+          transition: 'opacity 0.2s ease, visibility 0.2s ease'
         }}
       >
         ❯
@@ -50,9 +51,10 @@ export default function SubjectFilters({ selectedSubject, setSelectedSubject }: 
         onClick={() => filtersRef.current?.scrollBy({ left: 250, behavior: 'smooth' })}
         title="التمرير لليمين"
         style={{ 
+          visibility: showRightArrow ? 'visible' : 'hidden',
           opacity: showRightArrow ? 1 : 0, 
           pointerEvents: showRightArrow ? 'auto' : 'none',
-          transition: 'opacity 0.2s ease'
+          transition: 'opacity 0.2s ease, visibility 0.2s ease'
         }}
       >
         ❮
