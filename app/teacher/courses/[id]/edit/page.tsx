@@ -324,17 +324,17 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
       {/* Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #EBF2FF, #F0FFFE)',
+        background: 'var(--hero-gradient)',
         padding: '24px 0',
-        borderBottom: '1px solid #E5E7EB',
+        borderBottom: '1px solid var(--border)',
       }}>
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <a href="/teacher/dashboard" style={{ fontSize: 13, color: '#6B7280', textDecoration: 'none' }}>
+              <a href="/teacher/dashboard" style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none' }}>
                 ← العودة للوحة التحكم
               </a>
-              <h1 style={{ fontSize: 22, fontWeight: 800, marginTop: 4 }}>
+              <h1 style={{ fontSize: 22, fontWeight: 800, marginTop: 4, color: 'var(--text)' }}>
                 تعديل: {course?.title}
               </h1>
             </div>
@@ -674,13 +674,13 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
           {/* Right: Course settings */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             <div style={{
-              background: 'white', borderRadius: 16,
-              border: '1px solid #E5E7EB', padding: 24,
+              background: 'var(--card-bg)', borderRadius: 16,
+              border: '1px solid var(--border)', padding: 24,
             }}>
-              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 18 }}>إعدادات الدورة</h3>
+              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 18, color: 'var(--text)' }}>إعدادات الدورة</h3>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>عنوان الدورة *</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5, color: 'var(--text)' }}>عنوان الدورة *</label>
                 <input
                   className={`input-field ${courseErrors.title ? 'error' : ''}`}
                   value={courseForm.title}
@@ -691,7 +691,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>المادة *</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5, color: 'var(--text)' }}>المادة *</label>
                 <select
                   className={`input-field ${courseErrors.subject ? 'error' : ''}`}
                   value={courseForm.subject}
@@ -703,7 +703,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>الوصف</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5, color: 'var(--text)' }}>الوصف</label>
                 <textarea
                   className="input-field"
                   rows={3}
@@ -716,19 +716,31 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
               {/* Cover image */}
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 8 }}>صورة غلاف الدورة</label>
+                <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 8, color: 'var(--text)' }}>صورة غلاف الدورة</label>
                 <UploadDropzone
                   acceptType="image"
                   onUploadComplete={(url) => setCourseForm(p => ({ ...p, cover_image_url: url }))}
                 />
                 {courseForm.cover_image_url && (
-                  <div style={{ marginTop: 12 }}>
+                  <div style={{ marginTop: 12, position: 'relative' }}>
                     <img src={courseForm.cover_image_url} alt="غلاف"
-                      style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 10, border: '1px solid #E5E7EB', display: 'block' }} />
+                      style={{ width: '100%', maxHeight: 140, objectFit: 'cover', borderRadius: 10, border: '1px solid var(--border)', display: 'block' }} />
+                    <button
+                      type="button"
+                      onClick={() => setCourseForm(p => ({ ...p, cover_image_url: '' }))}
+                      style={{
+                        position: 'absolute', top: 8, left: 8,
+                        background: '#EF4444', color: 'white', border: 'none',
+                        padding: '6px 12px', borderRadius: 8, cursor: 'pointer',
+                        fontSize: 12, fontWeight: 600, fontFamily: 'Cairo, sans-serif'
+                      }}
+                    >
+                      🗑 حذف الغلاف
+                    </button>
                   </div>
                 )}
                 <details style={{ marginTop: 10 }}>
-                  <summary style={{ fontSize: 12, color: '#4F46E5', cursor: 'pointer', fontWeight: 600 }}>
+                  <summary style={{ fontSize: 12, color: 'var(--primary)', cursor: 'pointer', fontWeight: 600 }}>
                     🔗 أو أدخل رابط صورة خارجي (Imgur)
                   </summary>
                   <input
@@ -754,42 +766,42 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
             {/* Course status card */}
             <div style={{
-              background: 'white', borderRadius: 16,
-              border: '1px solid #E5E7EB', padding: 20,
+              background: 'var(--card-bg)', borderRadius: 16,
+              border: '1px solid var(--border)', padding: 20,
             }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12 }}>حالة الدورة</h3>
+              <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 12, color: 'var(--text)' }}>حالة الدورة</h3>
               <div style={{
                 display: 'flex', alignItems: 'center', gap: 12,
                 padding: '12px', borderRadius: 10,
-                background: course?.is_published ? '#F0FDF4' : '#FFFBEB',
-                border: `1px solid ${course?.is_published ? '#BBF7D0' : '#FDE68A'}`,
+                background: course?.is_published ? 'rgba(16,185,129,0.12)' : 'rgba(245,166,35,0.12)',
+                border: `1px solid ${course?.is_published ? 'rgba(16,185,129,0.3)' : 'rgba(245,166,35,0.3)'}`,
                 marginBottom: 12,
               }}>
                 <span style={{ fontSize: 20 }}>{course?.is_published ? '✅' : '📝'}</span>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 14, color: course?.is_published ? '#16A34A' : '#D97706' }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: course?.is_published ? '#10B981' : '#CA8A04' }}>
                     {course?.is_published ? 'منشورة' : 'مسودة'}
                   </div>
-                  <div style={{ fontSize: 12, color: '#6B7280' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     {course?.is_published ? 'الدورة مرئية للطلاب' : 'الدورة غير مرئية للطلاب بعد'}
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: 13, color: '#6B7280' }}>
-                عدد الدروس: <strong>{lessons.length}</strong><br />
-                دروس مع فيديو: <strong>{lessons.filter(l => l.video_url).length}</strong>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                عدد الدروس: <strong style={{ color: 'var(--text)' }}>{lessons.length}</strong><br />
+                دروس مع فيديو: <strong style={{ color: 'var(--text)' }}>{lessons.filter(l => l.video_url).length}</strong>
               </div>
             </div>
 
             {/* Subject info */}
             <div style={{
-              background: 'rgba(47,111,237,0.05)', borderRadius: 12,
-              border: '1px solid rgba(47,111,237,0.15)', padding: 16,
+              background: 'rgba(47,111,237,0.08)', borderRadius: 12,
+              border: '1.5px solid var(--border)', padding: 16,
             }}>
-              <div style={{ fontSize: 13, color: '#2F6FED', fontWeight: 600, marginBottom: 6 }}>
+              <div style={{ fontSize: 13, color: 'var(--primary)', fontWeight: 600, marginBottom: 6 }}>
                 💡 نصيحة
               </div>
-              <div style={{ fontSize: 13, color: '#6B7280', lineHeight: 1.6 }}>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
                 أضف الدروس أولاً ثم ارفع الفيديو لكل درس. يمكنك إعادة ترتيب الدروس بالسحب والإفلات.
               </div>
             </div>
@@ -799,7 +811,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
       <style>{`
         @media (max-width: 900px) {
-          .container > div[style*='grid-template-columns: 1fr 400px'] {
+          .container > div[style*='grid-template-columns'] {
             grid-template-columns: 1fr !important;
           }
         }

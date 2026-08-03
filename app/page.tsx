@@ -170,10 +170,7 @@ export default function HomePage() {
           </div>
 
           {/* Subject filters */}
-          <div style={{
-            display: 'flex', gap: 8, flexWrap: 'wrap',
-            justifyContent: 'center', marginBottom: 32,
-          }}>
+          <div className="filters-container">
             <button
               onClick={() => setSelectedSubject('')}
               style={{

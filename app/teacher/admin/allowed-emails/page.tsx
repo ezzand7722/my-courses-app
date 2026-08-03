@@ -107,22 +107,22 @@ export default function AllowedEmailsPage() {
       <Navbar />
       <div className="container" style={{ padding: '48px 24px', maxWidth: 800 }}>
         <div style={{ marginBottom: 32 }}>
-          <a href="/teacher/dashboard" style={{ fontSize: 14, color: '#6B7280', textDecoration: 'none' }}>
+          <a href="/teacher/dashboard" style={{ fontSize: 14, color: 'var(--text-muted)', textDecoration: 'none' }}>
             ← العودة للوحة التحكم
           </a>
-          <h1 style={{ fontSize: 28, fontWeight: 800, marginTop: 8 }}>إدارة المعلمين المسموح لهم</h1>
-          <p style={{ color: '#6B7280', marginTop: 4 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 800, marginTop: 8, color: 'var(--text)' }}>إدارة المعلمين المسموح لهم</h1>
+          <p style={{ color: 'var(--text-muted)', marginTop: 4 }}>
             أضف عناوين البريد الإلكتروني المسموح لها بالتسجيل في المنصة كمعلمين.
           </p>
         </div>
 
         <div style={{
-          background: 'white', borderRadius: 16,
-          padding: '24px', border: '1px solid #E5E7EB',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
+          background: 'var(--card-bg)', borderRadius: 16,
+          padding: '24px', border: '1px solid var(--border)',
+          boxShadow: 'var(--shadow)',
           marginBottom: 32
         }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>إضافة بريد إلكتروني جديد</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>إضافة بريد إلكتروني جديد</h2>
           
           <form onSubmit={handleAdd} style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 250 }}>
@@ -151,16 +151,16 @@ export default function AllowedEmailsPage() {
         </div>
 
         <div style={{
-          background: 'white', borderRadius: 16,
-          border: '1px solid #E5E7EB',
+          background: 'var(--card-bg)', borderRadius: 16,
+          border: '1px solid var(--border)',
           overflow: 'hidden'
         }}>
-          <div style={{ padding: '16px 20px', background: '#F9FAFB', borderBottom: '1px solid #E5E7EB', fontWeight: 700 }}>
+          <div style={{ padding: '16px 20px', background: 'var(--feature-card-bg)', borderBottom: '1px solid var(--border)', fontWeight: 700, color: 'var(--text)' }}>
             قائمة الإيميلات المصرح لها ({emails.length})
           </div>
           
           {emails.length === 0 ? (
-            <div style={{ padding: '32px', textAlign: 'center', color: '#6B7280' }}>
+            <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)' }}>
               لا يوجد إيميلات مصرح لها حالياً
             </div>
           ) : (
@@ -168,20 +168,20 @@ export default function AllowedEmailsPage() {
               {emails.map((item, index) => (
                 <div key={item.email} style={{
                   padding: '16px 20px',
-                  borderBottom: index < emails.length - 1 ? '1px solid #F3F4F6' : 'none',
+                  borderBottom: index < emails.length - 1 ? '1px solid var(--border)' : 'none',
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   flexWrap: 'wrap', gap: 12
                 }}>
                   <div>
-                    <div style={{ fontWeight: 600, fontSize: 15 }}>{item.email}</div>
-                    <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>
+                    <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--text)' }}>{item.email}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                       أضيف في {new Date(item.created_at).toLocaleDateString('ar-SA')}
                     </div>
                   </div>
                   <button
                     onClick={() => handleDelete(item.email)}
                     style={{
-                      background: '#FEF2F2', color: '#EF4444',
+                      background: 'rgba(239,68,68,0.1)', color: '#EF4444',
                       border: 'none', padding: '6px 12px', borderRadius: 8,
                       fontSize: 13, fontWeight: 600, cursor: 'pointer'
                     }}

@@ -47,6 +47,12 @@ export default function Navbar() {
     }
   };
 
+  const [avatarError, setAvatarError] = useState(false);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatar_url]);
+
   const handleLogout = async () => {
     await fetch('/api/auth/me', { method: 'DELETE' }).catch(() => {});
     await fetch('/teacher/logout', { method: 'POST' }).catch(() => {});
@@ -165,12 +171,17 @@ export default function Navbar() {
               >
                 <div style={{
                   width: 32, height: 32, borderRadius: '50%',
-                  background: user.avatar_url ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
+                  background: user.avatar_url && !avatarError ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
                   overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   flexShrink: 0,
                 }}>
-                  {user.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {user.avatar_url && !avatarError ? (
+                    <img 
+                      src={user.avatar_url} 
+                      alt={user.name} 
+                      onError={() => setAvatarError(true)}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
                   ) : (
                     <span style={{ color: 'white', fontSize: 14, fontWeight: 700 }}>
                       {user.name.charAt(0)}

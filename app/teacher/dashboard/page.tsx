@@ -33,7 +33,12 @@ export default function TeacherDashboard() {
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setAvatarError(false);
+  }, [user?.avatar_url]);
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
     setToast({ msg, type });
@@ -210,7 +215,7 @@ export default function TeacherDashboard() {
                 <div
                   style={{
                     width: 72, height: 72, borderRadius: '50%',
-                    background: user?.avatar_url ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
+                    background: user?.avatar_url && !avatarError ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
                     overflow: 'hidden',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: '3px solid var(--border)',
@@ -220,8 +225,13 @@ export default function TeacherDashboard() {
                   onClick={() => !uploadingAvatar && avatarInputRef.current?.click()}
                   title="انقر لتغيير الصورة"
                 >
-                  {user?.avatar_url ? (
-                    <img src={user.avatar_url} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  {user?.avatar_url && !avatarError ? (
+                    <img 
+                      src={user.avatar_url} 
+                      alt={user.name} 
+                      onError={() => setAvatarError(true)}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    />
                   ) : (
                     <span style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{user?.name.charAt(0)}</span>
                   )}
