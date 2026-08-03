@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import CourseCard from '@/components/CourseCard';
 import { SkeletonCourseCard } from '@/components/SkeletonCard';
-import { SUBJECTS } from '@/lib/utils';
+import SubjectFilters from '@/components/SubjectFilters';
 
 interface Course {
   id: string;
@@ -43,33 +43,7 @@ export default function CoursesPage() {
           <p style={{ color: '#6B7280', fontSize: 16 }}>اختر الدورة المناسبة وابدأ التعلّم الآن</p>
         </div>
 
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 32 }}>
-          <button
-            onClick={() => setSelectedSubject('')}
-            style={{
-              padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
-              fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-              background: !selectedSubject ? '#2F6FED' : '#F3F4F6',
-              color: !selectedSubject ? 'white' : '#374151',
-            }}
-          >
-            الكل
-          </button>
-          {SUBJECTS.map(s => (
-            <button
-              key={s.id}
-              onClick={() => setSelectedSubject(s.id)}
-              style={{
-                padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                background: selectedSubject === s.id ? '#2F6FED' : '#F3F4F6',
-                color: selectedSubject === s.id ? 'white' : '#374151',
-              }}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
+        <SubjectFilters selectedSubject={selectedSubject} setSelectedSubject={setSelectedSubject} />
 
         {loading ? (
           <div className="courses-grid">

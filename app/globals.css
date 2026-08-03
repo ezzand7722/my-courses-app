@@ -470,6 +470,16 @@ select.input-field option {
   margin-bottom: 32px;
   width: 100%;
 }
+.filter-btn {
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
 .scroll-arrow-btn {
   display: none;
 }
@@ -642,7 +652,7 @@ select.input-field option {
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
   }
-  .filters-container button {
+  .filter-btn {
     flex-shrink: 0 !important;
     scroll-snap-align: start;
   }

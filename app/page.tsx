@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import CourseCard from '@/components/CourseCard';
 import TeacherCard from '@/components/TeacherCard';
 import { SkeletonCourseCard, SkeletonTeacherCard } from '@/components/SkeletonCard';
-import { SUBJECTS } from '@/lib/utils';
+import SubjectFilters from '@/components/SubjectFilters';
 
 interface Course {
   id: string;
@@ -32,28 +32,7 @@ export default function HomePage() {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
-  const filtersRef = useRef<HTMLDivElement>(null);
 
-  const checkScroll = () => {
-    if (filtersRef.current) {
-      const { scrollWidth, clientWidth, scrollLeft } = filtersRef.current;
-      const maxScroll = scrollWidth - clientWidth;
-      const currentScroll = Math.abs(scrollLeft);
-      // In RTL, starting position is at the right (scrollLeft = 0). As we scroll left, currentScroll increases.
-      // Show left arrow if we haven't reached the left end.
-      setShowLeftArrow(scrollWidth > clientWidth && currentScroll < maxScroll - 5);
-      // Show right arrow if we have scrolled away from the right start.
-      setShowRightArrow(scrollWidth > clientWidth && currentScroll > 5);
-    }
-  };
-
-  useEffect(() => {
-    checkScroll();
-    window.addEventListener('resize', checkScroll);
-    return () => window.removeEventListener('resize', checkScroll);
-  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -192,59 +171,7 @@ export default function HomePage() {
           </div>
 
           {/* Subject filters */}
-          <div className="filters-wrapper">
-            {showLeftArrow && (
-              <button 
-                className="scroll-arrow-btn left-arrow"
-                onClick={() => filtersRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
-                title="التمرير لليسار"
-              >
-                ❮
-              </button>
-            )}
-            {showRightArrow && (
-              <button 
-                className="scroll-arrow-btn right-arrow"
-                onClick={() => filtersRef.current?.scrollBy({ left: 250, behavior: 'smooth' })}
-                title="التمرير لليمين"
-              >
-                ❯
-              </button>
-            )}
-            <div 
-              className="filters-container" 
-              ref={filtersRef}
-              onScroll={checkScroll}
-            >
-              <button
-              onClick={() => setSelectedSubject('')}
-              style={{
-                padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                background: !selectedSubject ? 'var(--primary)' : 'var(--feature-card-bg)',
-                color: !selectedSubject ? 'white' : 'var(--text)',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              الكل
-            </button>
-            {SUBJECTS.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setSelectedSubject(s.id)}
-                style={{
-                  padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
-                  fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                  background: selectedSubject === s.id ? 'var(--primary)' : 'var(--feature-card-bg)',
-                  color: selectedSubject === s.id ? 'white' : 'var(--text)',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-            </div>
-          </div>
+          <SubjectFilters selectedSubject={selectedSubject} setSelectedSubject={setSelectedSubject} />
 
           {loadingCourses ? (
             <div className="courses-grid">
