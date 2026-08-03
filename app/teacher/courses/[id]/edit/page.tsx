@@ -345,16 +345,16 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                 style={{
                   padding: '9px 18px', borderRadius: 10, border: 'none', cursor: 'pointer',
                   fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
-                  background: course?.is_published ? '#FEF9C3' : '#DCFCE7',
-                  color: course?.is_published ? '#CA8A04' : '#16A34A',
+                  background: course?.is_published ? 'rgba(245,166,35,0.15)' : 'rgba(16,185,129,0.15)',
+                  color: course?.is_published ? '#F5A623' : '#10B981',
                 }}
               >
                 {saving ? '...' : course?.is_published ? 'إلغاء النشر' : '🚀 نشر الدورة'}
               </button>
               <a href={`/courses/${id}`} target="_blank">
                 <button style={{
-                  padding: '9px 18px', borderRadius: 10, border: '1.5px solid #E5E7EB',
-                  background: 'white', cursor: 'pointer',
+                  padding: '9px 18px', borderRadius: 10, border: '1.5px solid var(--border)',
+                  background: 'var(--card-bg)', color: 'var(--text)', cursor: 'pointer',
                   fontFamily: 'Cairo, sans-serif', fontSize: 14, fontWeight: 600,
                 }}>
                   👁 معاينة
@@ -527,10 +527,10 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
             {lessons.length === 0 ? (
               <div style={{
                 textAlign: 'center', padding: '48px 24px',
-                background: 'white', borderRadius: 14, border: '1px solid #E5E7EB',
+                background: 'var(--card-bg)', borderRadius: 14, border: '1px solid var(--border)',
               }}>
                 <div style={{ fontSize: 48, marginBottom: 12 }}>🎬</div>
-                <p style={{ color: '#6B7280' }}>أضف دروسك الأولى</p>
+                <p style={{ color: 'var(--text-muted)' }}>أضف دروسك الأولى</p>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -543,8 +543,8 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                     onDrop={() => handleDrop(lesson.id)}
                     onDragEnd={() => { setDragging(null); setDragOver(null); }}
                     style={{
-                      background: 'white', borderRadius: 14,
-                      border: `1.5px solid ${dragOver === lesson.id ? '#2F6FED' : '#E5E7EB'}`,
+                      background: 'var(--card-bg)', borderRadius: 14,
+                      border: `1.5px solid ${dragOver === lesson.id ? 'var(--primary)' : 'var(--border)'}`,
                       overflow: 'hidden',
                       opacity: dragging === lesson.id ? 0.5 : 1,
                       transition: 'border-color 0.15s, opacity 0.15s',
@@ -554,17 +554,17 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                     <div style={{
                       padding: '14px 16px',
                       display: 'flex', alignItems: 'center', gap: 12,
-                      background: '#F9FAFB',
-                      borderBottom: uploadingForLesson === lesson.id ? '1px solid #E5E7EB' : 'none',
+                      background: 'var(--feature-card-bg)',
+                      borderBottom: uploadingForLesson === lesson.id ? '1px solid var(--border)' : 'none',
                       cursor: 'grab',
                     }}>
                       {/* Drag handle */}
-                      <div style={{ color: '#9CA3AF', fontSize: 18, flexShrink: 0, cursor: 'grab' }}>⠿</div>
+                      <div style={{ color: 'var(--text-muted)', fontSize: 18, flexShrink: 0, cursor: 'grab' }}>⠿</div>
 
                       {/* Order + title */}
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 12, color: '#6B7280', fontWeight: 500 }}>الدرس {lesson.order_index}</div>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1D23' }}>{lesson.title}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>الدرس {lesson.order_index}</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{lesson.title}</div>
                         {lesson.video_url && (
                           <div style={{ fontSize: 12, color: '#10B981', marginTop: 2, fontWeight: 500 }}>
                             ✅ فيديو مضاف
@@ -580,8 +580,8 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                             style={{
                               padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                               fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
-                              background: uploadingForLesson === lesson.id ? '#F3F4F6' : '#EEF2FF',
-                              color: uploadingForLesson === lesson.id ? '#4B5563' : '#4F46E5',
+                              background: uploadingForLesson === lesson.id ? 'rgba(128,128,128,0.15)' : 'rgba(79,70,229,0.12)',
+                              color: uploadingForLesson === lesson.id ? 'var(--text-muted)' : 'var(--primary)',
                             }}
                           >
                             {uploadingForLesson === lesson.id ? 'إلغاء' : '📥 إضافة رابط فيديو'}
@@ -593,7 +593,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                             style={{
                               padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                               fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
-                              background: '#F3F4F6', color: '#4B5563',
+                              background: 'rgba(128,128,128,0.15)', color: 'var(--text-muted)',
                             }}
                           >
                             🔄 تغيير الرابط
@@ -605,7 +605,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                           style={{
                             padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                             fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
-                            background: '#FEF2F2', color: '#EF4444',
+                            background: 'rgba(239,68,68,0.12)', color: '#EF4444',
                           }}
                         >
                           {deletingLesson === lesson.id ? '...' : '🗑'}
@@ -615,7 +615,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
                     {/* Cloudinary Video Upload & YouTube link input */}
                     {uploadingForLesson === lesson.id && (
-                      <div style={{ padding: 16, background: '#F9FAFB', borderTop: '1px solid #E5E7EB' }}>
+                      <div style={{ padding: 16, background: 'var(--feature-card-bg)', borderTop: '1px solid var(--border)' }}>
                         <div style={{ marginBottom: 12 }}>
                           <UploadDropzone
                             acceptType="video"
