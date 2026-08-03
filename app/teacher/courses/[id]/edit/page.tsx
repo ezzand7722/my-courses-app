@@ -438,7 +438,7 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                       type="button"
                       onClick={() => setLessonVideoMode(lessonVideoMode === 'url' ? 'none' : 'url')}
                       style={{
-                        padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                        padding: '7px 14px', borderRadius: 8, cursor: 'pointer',
                         fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
                         background: lessonVideoMode === 'url' ? 'var(--primary)' : 'var(--card-bg)',
                         color: lessonVideoMode === 'url' ? 'white' : 'var(--text)',
