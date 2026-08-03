@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import CourseCard from '@/components/CourseCard';
 import TeacherCard from '@/components/TeacherCard';
@@ -32,6 +32,21 @@ export default function HomePage() {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
+  const [showScrollArrow, setShowScrollArrow] = useState(false);
+  const filtersRef = useRef<HTMLDivElement>(null);
+
+  const checkScroll = () => {
+    if (filtersRef.current) {
+      const { scrollWidth, clientWidth, scrollLeft } = filtersRef.current;
+      setShowScrollArrow(scrollWidth > clientWidth && Math.abs(scrollLeft) < (scrollWidth - clientWidth) - 10);
+    }
+  };
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -170,8 +185,22 @@ export default function HomePage() {
           </div>
 
           {/* Subject filters */}
-          <div className="filters-container">
-            <button
+          <div className="filters-wrapper">
+            {showScrollArrow && (
+              <button 
+                className="scroll-arrow-btn"
+                onClick={() => filtersRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
+                title="التمرير لعرض المزيد"
+              >
+                ❮
+              </button>
+            )}
+            <div 
+              className="filters-container" 
+              ref={filtersRef}
+              onScroll={checkScroll}
+            >
+              <button
               onClick={() => setSelectedSubject('')}
               style={{
                 padding: '8px 20px', borderRadius: 20, border: 'none', cursor: 'pointer',
@@ -198,6 +227,7 @@ export default function HomePage() {
                 {s.label}
               </button>
             ))}
+            </div>
           </div>
 
           {loadingCourses ? (
