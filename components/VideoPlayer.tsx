@@ -1,14 +1,14 @@
 'use client';
 
 interface VideoPlayerProps {
-  streamUid?: string; // Kept for backwards compatibility
+  streamUid?: string;
   videoUrl?: string;
   title?: string;
 }
 
 export default function VideoPlayer({ streamUid, videoUrl, title }: VideoPlayerProps) {
   const url = videoUrl || streamUid;
-  
+
   if (!url) {
     return (
       <div style={{
@@ -22,20 +22,22 @@ export default function VideoPlayer({ streamUid, videoUrl, title }: VideoPlayerP
     );
   }
 
-  // Check if it's a direct video file (MP4, WebM, MOV, or direct URL)
-  const isDirectVideo = url.match(/\.(mp4|webm|ogg|mov)($|\?)/i) || (!url.includes('youtube.com') && !url.includes('youtu.be') && !url.includes('vimeo.com') && !url.includes('/embed/'));
+  // Check if it's a direct video file
+  const isDirectVideo = url.match(/\.(mp4|webm|ogg|mov)($|\?)/i) ||
+    (!url.includes('youtube.com') && !url.includes('youtu.be') &&
+     !url.includes('vimeo.com') && !url.includes('/embed/'));
 
-  // Parse YouTube or Vimeo URL
+  // Parse YouTube or Vimeo URL — NO autoplay
   let embedUrl = url;
   if (url.includes('youtube.com/watch?v=')) {
     const videoId = url.split('v=')[1]?.split('&')[0];
-    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
   } else if (url.includes('youtu.be/')) {
     const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-    embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0`;
   } else if (url.includes('vimeo.com/')) {
     const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-    embedUrl = `https://player.vimeo.com/video/${videoId}?autoplay=1`;
+    embedUrl = `https://player.vimeo.com/video/${videoId}`;
   }
 
   return (
@@ -54,14 +56,13 @@ export default function VideoPlayer({ streamUid, videoUrl, title }: VideoPlayerP
             src={url}
             controls
             controlsList="nodownload"
-            autoPlay
             style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0, objectFit: 'contain', background: '#000' }}
           />
         ) : (
           <iframe
             src={embedUrl}
             style={{ border: 'none', width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
-            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+            allow="accelerometer; gyroscope; encrypted-media; picture-in-picture;"
             allowFullScreen
             title={title || 'فيديو الدرس'}
           />

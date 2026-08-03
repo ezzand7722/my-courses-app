@@ -45,9 +45,11 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
 
   // New lesson form state
   const [showLessonForm, setShowLessonForm] = useState(false);
-  const [lessonForm, setLessonForm] = useState({ title: '', description: '' });
+  const [lessonForm, setLessonForm] = useState({ title: '', description: '', video_url: '' });
+  const [lessonVideoMode, setLessonVideoMode] = useState<'none' | 'url' | 'upload'>('none');
   const [lessonErrors, setLessonErrors] = useState<Record<string, string>>({});
   const [savingLesson, setSavingLesson] = useState(false);
+  const [uploadingNewLesson, setUploadingNewLesson] = useState(false);
 
   // Video upload state - per lesson
   const [uploadingForLesson, setUploadingForLesson] = useState<string | null>(null);
@@ -137,12 +139,17 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
       const res = await fetch(`/api/courses/${id}/lessons`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(lessonForm),
+        body: JSON.stringify({
+          title: lessonForm.title,
+          description: lessonForm.description,
+          video_url: lessonForm.video_url || undefined,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
         setLessons(prev => [...prev, data.lesson]);
-        setLessonForm({ title: '', description: '' });
+        setLessonForm({ title: '', description: '', video_url: '' });
+        setLessonVideoMode('none');
         setShowLessonForm(false);
         showToast('تم إضافة الدرس بنجاح');
       } else {
@@ -383,12 +390,14 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
             {/* Add lesson form */}
             {showLessonForm && (
               <div style={{
-                background: '#F0F9FF', border: '1.5px solid #BAE6FD',
+                background: 'var(--feature-card-bg)', border: '1.5px solid var(--border)',
                 borderRadius: 14, padding: 20, marginBottom: 16,
               }}>
-                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>درس جديد</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, color: 'var(--text)' }}>درس جديد</h3>
+
+                {/* Title */}
                 <div style={{ marginBottom: 12 }}>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5, color: 'var(--text)' }}>
                     عنوان الدرس *
                   </label>
                   <input
@@ -402,8 +411,10 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                     <div style={{ color: '#EF4444', fontSize: 12, marginTop: 3 }}>{lessonErrors.title}</div>
                   )}
                 </div>
-                <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5 }}>
+
+                {/* Description */}
+                <div style={{ marginBottom: 14 }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 5, color: 'var(--text)' }}>
                     وصف الدرس (اختياري)
                   </label>
                   <textarea
@@ -416,20 +427,95 @@ export default function CourseEditPage({ params }: { params: Promise<{ id: strin
                     style={{ resize: 'vertical' }}
                   />
                 </div>
+
+                {/* Video section */}
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: 'block', fontWeight: 600, fontSize: 13, marginBottom: 8, color: 'var(--text)' }}>
+                    فيديو الدرس (اختياري)
+                  </label>
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                    <button
+                      type="button"
+                      onClick={() => setLessonVideoMode(lessonVideoMode === 'url' ? 'none' : 'url')}
+                      style={{
+                        padding: '7px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                        fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
+                        background: lessonVideoMode === 'url' ? 'var(--primary)' : 'var(--card-bg)',
+                        color: lessonVideoMode === 'url' ? 'white' : 'var(--text)',
+                        border: '1.5px solid var(--border)',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      🔗 رابط YouTube / Vimeo
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLessonVideoMode(lessonVideoMode === 'upload' ? 'none' : 'upload')}
+                      style={{
+                        padding: '7px 14px', borderRadius: 8, cursor: 'pointer',
+                        fontFamily: 'Cairo, sans-serif', fontSize: 12, fontWeight: 600,
+                        background: lessonVideoMode === 'upload' ? 'var(--primary)' : 'var(--card-bg)',
+                        color: lessonVideoMode === 'upload' ? 'white' : 'var(--text)',
+                        border: '1.5px solid var(--border)',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      📤 رفع ملف فيديو
+                    </button>
+                  </div>
+
+                  {lessonVideoMode === 'url' && (
+                    <div>
+                      <input
+                        type="url"
+                        className="input-field"
+                        placeholder="https://www.youtube.com/watch?v=..."
+                        value={lessonForm.video_url}
+                        onChange={e => setLessonForm(p => ({ ...p, video_url: e.target.value }))}
+                        disabled={savingLesson}
+                        style={{ direction: 'ltr' }}
+                      />
+                      {lessonForm.video_url && (
+                        <div style={{ fontSize: 11, color: '#10B981', marginTop: 4 }}>✓ رابط مضاف</div>
+                      )}
+                    </div>
+                  )}
+
+                  {lessonVideoMode === 'upload' && (
+                    <div>
+                      <UploadDropzone
+                        acceptType="video"
+                        onUploadComplete={(url) => {
+                          setLessonForm(p => ({ ...p, video_url: url }));
+                          setUploadingNewLesson(false);
+                        }}
+                      />
+                      {lessonForm.video_url && lessonVideoMode === 'upload' && (
+                        <div style={{ fontSize: 11, color: '#10B981', marginTop: 6 }}>✅ تم رفع الفيديو بنجاح</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button
                     className="btn-primary"
                     onClick={addLesson}
-                    disabled={savingLesson}
+                    disabled={savingLesson || uploadingNewLesson}
                     style={{ flex: 1, justifyContent: 'center', padding: '10px' }}
                   >
                     {savingLesson ? <span className="spinner" /> : 'حفظ الدرس'}
                   </button>
                   <button
                     className="btn-ghost"
-                    onClick={() => { setShowLessonForm(false); setLessonForm({ title: '', description: '' }); setLessonErrors({}); }}
+                    onClick={() => {
+                      setShowLessonForm(false);
+                      setLessonForm({ title: '', description: '', video_url: '' });
+                      setLessonVideoMode('none');
+                      setLessonErrors({});
+                    }}
                     disabled={savingLesson}
-                    style={{ padding: '10px 16px', border: '1.5px solid #E5E7EB', borderRadius: 10 }}
+                    style={{ padding: '10px 16px', border: '1.5px solid var(--border)', borderRadius: 10 }}
                   >
                     إلغاء
                   </button>
