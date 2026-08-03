@@ -32,13 +32,20 @@ export default function HomePage() {
   const [loadingCourses, setLoadingCourses] = useState(true);
   const [loadingTeachers, setLoadingTeachers] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState<string>('');
-  const [showScrollArrow, setShowScrollArrow] = useState(false);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
   const filtersRef = useRef<HTMLDivElement>(null);
 
   const checkScroll = () => {
     if (filtersRef.current) {
       const { scrollWidth, clientWidth, scrollLeft } = filtersRef.current;
-      setShowScrollArrow(scrollWidth > clientWidth && Math.abs(scrollLeft) < (scrollWidth - clientWidth) - 10);
+      const maxScroll = scrollWidth - clientWidth;
+      const currentScroll = Math.abs(scrollLeft);
+      // In RTL, starting position is at the right (scrollLeft = 0). As we scroll left, currentScroll increases.
+      // Show left arrow if we haven't reached the left end.
+      setShowLeftArrow(scrollWidth > clientWidth && currentScroll < maxScroll - 5);
+      // Show right arrow if we have scrolled away from the right start.
+      setShowRightArrow(scrollWidth > clientWidth && currentScroll > 5);
     }
   };
 
@@ -186,13 +193,22 @@ export default function HomePage() {
 
           {/* Subject filters */}
           <div className="filters-wrapper">
-            {showScrollArrow && (
+            {showLeftArrow && (
               <button 
-                className="scroll-arrow-btn"
+                className="scroll-arrow-btn left-arrow"
                 onClick={() => filtersRef.current?.scrollBy({ left: -250, behavior: 'smooth' })}
-                title="التمرير لعرض المزيد"
+                title="التمرير لليسار"
               >
                 ❮
+              </button>
+            )}
+            {showRightArrow && (
+              <button 
+                className="scroll-arrow-btn right-arrow"
+                onClick={() => filtersRef.current?.scrollBy({ left: 250, behavior: 'smooth' })}
+                title="التمرير لليمين"
+              >
+                ❯
               </button>
             )}
             <div 

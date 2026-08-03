@@ -610,12 +610,9 @@ select.input-field option {
   .scroll-arrow-btn {
     display: flex;
     position: absolute;
-    left: 0;
     top: 0;
     bottom: 0;
-    background: linear-gradient(90deg, var(--bg) 50%, transparent);
     border: none;
-    padding: 0 16px 0 24px;
     align-items: center;
     justify-content: center;
     z-index: 10;
@@ -623,6 +620,16 @@ select.input-field option {
     color: var(--primary);
     font-size: 20px;
     animation: pulse-soft 2s infinite;
+  }
+  .scroll-arrow-btn.left-arrow {
+    left: 0;
+    background: linear-gradient(90deg, var(--bg) 50%, transparent);
+    padding: 0 16px 0 24px;
+  }
+  .scroll-arrow-btn.right-arrow {
+    right: 0;
+    background: linear-gradient(270deg, var(--bg) 50%, transparent);
+    padding: 0 24px 0 16px;
   }
   /* Filters Horizontal Scroll */
   .filters-container {
