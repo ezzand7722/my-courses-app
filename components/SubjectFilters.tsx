@@ -18,8 +18,9 @@ export default function SubjectFilters({ selectedSubject, setSelectedSubject }: 
       const { scrollWidth, clientWidth, scrollLeft } = filtersRef.current;
       const maxScroll = scrollWidth - clientWidth;
       const currentScroll = Math.abs(scrollLeft);
-      setShowLeftArrow(scrollWidth > clientWidth && currentScroll < maxScroll - 5);
-      setShowRightArrow(scrollWidth > clientWidth && currentScroll > 5);
+      const threshold = 60; // Disappear before hitting the absolute edge (approx 1.5 - 2 arrow widths)
+      setShowLeftArrow(scrollWidth > clientWidth && currentScroll < maxScroll - threshold);
+      setShowRightArrow(scrollWidth > clientWidth && currentScroll > threshold);
     }
   };
 
