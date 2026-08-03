@@ -29,6 +29,7 @@ export default function TeacherPageClient({ params }: { params: Promise<{ id: st
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [avatarError, setAvatarError] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetch(`/api/teachers/${id}`)
@@ -75,20 +76,27 @@ export default function TeacherPageClient({ params }: { params: Promise<{ id: st
       <div style={{ background: 'var(--hero-gradient)', padding: '48px 0', borderBottom: '1px solid var(--border)' }}>
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
-            <div style={{
+            <div 
+              onClick={() => { if (teacher.avatar_url && !avatarError) setIsModalOpen(true); }}
+              style={{
               width: 100, height: 100, borderRadius: '50%',
               background: teacher.avatar_url && !avatarError ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)',
               overflow: 'hidden', flexShrink: 0,
               border: '4px solid var(--border)',
               boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
+              cursor: teacher.avatar_url && !avatarError ? 'pointer' : 'default',
+              transition: 'transform 0.2s ease'
+            }}
+            className={teacher.avatar_url && !avatarError ? 'card-hover' : ''}
+            title={teacher.avatar_url && !avatarError ? "انقر لرؤية الصورة بحجم كامل" : ""}
+            >
               {teacher.avatar_url && !avatarError ? (
                 <img 
                   src={teacher.avatar_url} 
                   alt={teacher.name} 
                   onError={() => setAvatarError(true)}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} 
                 />
               ) : (
                 <span style={{ fontSize: 36, color: 'white', fontWeight: 700 }}>{teacher.name.charAt(0)}</span>
@@ -105,6 +113,48 @@ export default function TeacherPageClient({ params }: { params: Promise<{ id: st
           </div>
         </div>
       </div>
+
+      {/* Avatar Modal */}
+      {isModalOpen && teacher?.avatar_url && !avatarError && (
+        <div 
+          onClick={() => setIsModalOpen(false)}
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+            zIndex: 99999,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 24,
+            cursor: 'zoom-out',
+            animation: 'fadeIn 0.2s ease-out'
+          }}
+        >
+          <img 
+            src={teacher.avatar_url} 
+            alt={teacher.name} 
+            style={{ 
+              maxWidth: '100%', 
+              maxHeight: '100%', 
+              objectFit: 'contain',
+              borderRadius: 16,
+              boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
+              transform: 'scale(1)',
+              transition: 'transform 0.3s ease'
+            }} 
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button 
+            onClick={() => setIsModalOpen(false)}
+            style={{
+              position: 'absolute', top: 24, right: 24,
+              background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white',
+              width: 44, height: 44, borderRadius: '50%', fontSize: 24,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Courses */}
       <div className="container" style={{ padding: '48px 24px' }}>

@@ -242,7 +242,7 @@ export default function TeacherDashboard() {
                       src={user.avatar_url} 
                       alt={user.name} 
                       onError={() => setAvatarError(true)}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} 
                     />
                   ) : (
                     <span style={{ color: 'white', fontSize: 28, fontWeight: 700 }}>{user?.name.charAt(0)}</span>

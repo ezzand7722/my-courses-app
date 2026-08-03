@@ -26,12 +26,12 @@ export default function TeacherCard({ id, name, bio, avatar_url, course_count }:
           background: avatar_url && !avatarError ? 'transparent' : 'linear-gradient(135deg, #2F6FED, #0FB5AE)'
         }}>
           {avatar_url && !avatarError ? (
-            <img 
-              src={avatar_url} 
-              alt={name} 
-              onError={() => setAvatarError(true)}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-            />
+              <img 
+                src={avatar_url} 
+                alt={name} 
+                onError={() => setAvatarError(true)}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center' }} 
+              />
           ) : (
             <span style={{ color: 'white', fontSize: 24, fontWeight: 700 }}>
               {name.charAt(0)}

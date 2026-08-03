@@ -460,6 +460,7 @@ select.input-field option {
 /* Filters horizontal scroll on mobile */
 .filters-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
   margin-bottom: 32px;
@@ -598,11 +599,17 @@ select.input-field option {
   /* Filters Horizontal Scroll */
   .filters-container {
     justify-content: flex-start !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
     white-space: nowrap !important;
     padding: 4px 8px 12px !important;
     margin-bottom: 24px !important;
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  .filters-container button {
+    flex-shrink: 0 !important;
+    scroll-snap-align: start;
   }
   .filters-container::-webkit-scrollbar {
     display: none;
