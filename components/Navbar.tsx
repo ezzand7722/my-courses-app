@@ -72,7 +72,7 @@ export default function Navbar() {
       boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
       maxWidth: '100vw',
     }}>
-      <div className="container" style={{ display: 'flex', alignItems: 'center', height: 60, gap: 8, overflow: 'hidden' }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', height: 60, gap: 8 }}>
         {/* Logo */}
         <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
